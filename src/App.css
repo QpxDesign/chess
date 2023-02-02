@@ -1,0 +1,43 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+.chess-board {
+  display: flex;
+  max-width: 100vw;
+  max-height: 100vh;
+  height: 100vh;
+  margin: 0 auto;
+  aspect-ratio: 1/1;
+  flex-direction: column;
+}
+.row {
+  display: flex;
+  flex: 1;
+}
+.square {
+  flex: 1 1 10em;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+.square img {
+  width: 4em;
+  color: white;
+}
+.light {
+  background-color: red;
+}
+.dark {
+  background-color: blue;
+}
+.white {
+  color: white !important;
+  fill:#ffffff !important;
+}
+.green {
+  background-color: green !important;
+}
+.default {
+  background-color: green;
+}
