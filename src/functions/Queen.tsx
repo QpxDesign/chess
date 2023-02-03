@@ -10,7 +10,8 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
   }
   if (
     bcg[yIndex + forwardN] !== undefined &&
-    bcg[yIndex + forwardN][xIndex] !== undefined
+    bcg[yIndex + forwardN][xIndex] !== undefined &&
+    bcg[yIndex + forwardN][xIndex].color !== bcg[yIndex][xIndex].color
   ) {
     bcg[yIndex + forwardN][xIndex] = "purple";
   }
@@ -25,7 +26,8 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
   }
   if (
     bcg[yIndex - backwardN] !== undefined &&
-    bcg[yIndex - backwardN][xIndex] !== undefined
+    bcg[yIndex - backwardN][xIndex] !== undefined &&
+    bcg[yIndex - backwardN][xIndex].color !== bcg[yIndex][xIndex].color
   ) {
     bcg[yIndex - backwardN][xIndex] = "purple";
   }
@@ -38,7 +40,11 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
     bcg[yIndex][xIndex + rightN] = "green";
     rightN++;
   }
-  if (bcg[yIndex] !== undefined && bcg[yIndex][xIndex + rightN] !== undefined) {
+  if (
+    bcg[yIndex] !== undefined &&
+    bcg[yIndex][xIndex + rightN] !== undefined &&
+    bcg[yIndex][xIndex + rightN].color !== bcg[yIndex][xIndex].color
+  ) {
     bcg[yIndex][xIndex + rightN] = "purple";
   }
   var leftN = 1;
@@ -49,7 +55,11 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
     bcg[yIndex][xIndex - leftN] = "green";
     leftN++;
   }
-  if (bcg[yIndex] !== undefined && bcg[yIndex][xIndex - leftN] !== undefined) {
+  if (
+    bcg[yIndex] !== undefined &&
+    bcg[yIndex][xIndex - leftN] !== undefined &&
+    bcg[yIndex][xIndex - leftN].color !== bcg[yIndex][xIndex].color
+  ) {
     bcg[yIndex][xIndex - leftN] = "purple";
   }
   //diagonals
@@ -67,7 +77,9 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
   if (
     bcg[yIndex + sidewaysForwardRightN] !== undefined &&
     bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] !==
-      undefined
+      undefined &&
+    bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN]
+      .color !== bcg[yIndex][xIndex].color
   ) {
     bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] =
       "purple";
@@ -85,7 +97,9 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
   if (
     bcg[yIndex + sidewaysForwardLeftN] !== undefined &&
     bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
-      undefined
+      undefined &&
+    bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN].color !==
+      bcg[yIndex][xIndex].color
   ) {
     bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] =
       "purple";
@@ -105,7 +119,9 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
   if (
     bcg[yIndex - sidewaysBackwardsLeftN] !== undefined &&
     bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] !==
-      undefined
+      undefined &&
+    bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN]
+      .color !== bcg[yIndex][xIndex].color
   ) {
     bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] =
       "purple";
@@ -125,7 +141,9 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
   if (
     bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
     bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsLeftN] !==
-      undefined
+      undefined &&
+    bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN]
+      .color !== bcg[yIndex][xIndex].color
   ) {
     bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN] =
       "purple";

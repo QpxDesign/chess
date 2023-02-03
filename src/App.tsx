@@ -55,7 +55,6 @@ function App() {
   }
   function handlePieceTooltip(pieceObj: any, yIndex: any, xIndex: any) {
     if (pieceObj === null || pieceObj === undefined) {
-      console.log("nerd");
       return;
     }
 
@@ -79,10 +78,12 @@ function App() {
   }
   function handlePieceSelect(currentY: any, currentX: any) {
     const pieceObj = gameboard[currentY][currentX];
-    handlePieceTooltip(pieceObj, currentY, currentX);
+    if (activePiece !== undefined) {
+      handlePieceTooltip(pieceObj, currentY, currentX);
+    }
+
     if (pieceObj?.id === activePiece?.id) {
       setActivePiece({});
-      handlePieceTooltip(pieceObj, currentY, currentX);
       return;
     }
     var bcg = JSON.parse(JSON.stringify(gameboard));
@@ -133,7 +134,6 @@ function App() {
                   handlePieceTooltip(gameboard[yIndex][xIndex], yIndex, xIndex)
                 }
                 onClick={() => handlePieceSelect(yIndex, xIndex)}
-                onMouseLeave={() => handlePreviewReset()}
                 className={determineClassName(yIndex, xIndex)}
               >
                 {gameboard[yIndex] !== undefined &&
