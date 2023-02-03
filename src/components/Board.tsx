@@ -93,23 +93,25 @@ export default function Board() {
   }
   function handlePieceSelect(currentY: any, currentX: any) {
     const pieceObj = gameboard[currentY][currentX];
-    console.log(pieceObj);
-    handlePieceTooltip(pieceObj, currentY, currentX);
-
-    if (pieceObj.id === activePiece.id) {
-      // handle piece un-select
-      setActivePiece({});
-      return;
-    } else {
-      setActivePiece(pieceObj);
+    if (activePiece !== undefined) {
+      handlePieceTooltip(pieceObj, currentY, currentX);
     }
 
+    if (pieceObj?.id === activePiece?.id) {
+      setActivePiece({});
+      return;
+    }
     var bcg = JSON.parse(JSON.stringify(gameboard));
+    console.log(gameboard);
     if (bcg[currentY] !== undefined) {
       if (bcg[currentY][currentX] !== undefined) {
+        setActivePiece(pieceObj);
+        console.log(activePiece);
         handlePieceTooltip(activePiece, currentY, currentX);
       }
     }
+
+    setGameboardColors(bcg);
   }
   function determineClassName(y: any, x: any) {
     var class_name = "square ";
@@ -127,11 +129,11 @@ export default function Board() {
       class_name += gameboardColors[y][x];
       class_name += " ";
     }
-    if (
+      if (
       gameboard[y] !== undefined &&
       gameboard[y][x] !== undefined &&
       gameboard[y][x].id !== undefined &&
-      activePiece.id === gameboard[y][x].id
+      activePiece?.id === gameboard[y][x].id
     )
       class_name += "inplay ";
     return class_name;
@@ -143,10 +145,10 @@ export default function Board() {
           {size.map((i2, xIndex) => (
             <div
               onMouseOver={() =>
-                handlePieceTooltip(gameboard[yIndex][xIndex], yIndex, xIndex)
-              }
-              className={determineClassName(yIndex, xIndex)}
-              onClick={() => console.log(inHand)}
+                  handlePieceTooltip(gameboard[yIndex][xIndex], yIndex, xIndex)
+                }
+                onClick={() => handlePieceSelect(yIndex, xIndex)}
+                className={determineClassName(yIndex, xIndex)}
             >
               {gameboard[yIndex] !== undefined &&
                 gameboard[yIndex][xIndex] !== undefined &&
