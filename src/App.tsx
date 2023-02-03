@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import DefaultPositions from "./assets/default-positions.json";
+import { ColorBishop } from "./functions/Bishop";
+import { ColorKnight } from "./functions/Knight";
+import { ColorPawn } from "./functions/Pawn";
+import { ColorQueen } from "./functions/Queen";
+import { ColorRook } from "./functions/Rook";
 
 function App() {
   const size = [1, 2, 3, 4, 5, 6, 7, 8];
   const [gameboard, setGameboard]: any = useState([]);
-  const [gameboardColors, setGameboardColors] : any = useState([])
+  const [gameboardColors, setGameboardColors]: any = useState([]);
+  const [activePiece, setActivePiece]: any = useState({});
   useEffect(() => {
     // create gameboard and gameboardColors
     const gb = new Array(8);
@@ -16,30 +22,105 @@ function App() {
     for (var i = 0; i < gbc.length; i++) {
       gbc[i] = new Array(8);
     }
-    // add default colors 
+    // add default colors
     for (var bh1 = 0; bh1 < gbc.length; bh1++) {
       for (var bh2 = 0; bh2 < gbc.length; bh2++) {
-        gbc[bh1][bh2]="default"
+        gbc[bh1][bh2] = "default";
       }
     }
-    setGameboardColors(gbc)
+    setGameboardColors(...gbc);
     // add pieces to default positions
     DefaultPositions.map((pos) => {
       const pieceObject = {
         icon: pos.icon,
         id: pos.id,
         color: pos.color,
+        facing: pos.facing,
       };
       gb[Number(pos.rowNum)][Number(pos.colNum)] = pieceObject;
     });
     setGameboard(gb);
   }, []);
-  function handlePieceMove(pieceObj : any, yIndex: any, xIndex: any) {
-    if (pieceObj.icon === "Pawn") {
-      gameboardColors[yIndex][xIndex] = "green"
-      setGameboardColors(gameboardColors)
-      console.log(gameboardColors)
+  function handlePreviewReset() {
+    const gbc = new Array(8);
+    for (var i = 0; i < gbc.length; i++) {
+      gbc[i] = new Array(8);
     }
+    for (var bh1 = 0; bh1 < gbc.length; bh1++) {
+      for (var bh2 = 0; bh2 < gbc.length; bh2++) {
+        gbc[bh1][bh2] = "default";
+      }
+    }
+    setGameboardColors(...gbc);
+  }
+  function handlePieceTooltip(pieceObj: any, yIndex: any, xIndex: any) {
+    if (pieceObj === null || pieceObj === undefined) {
+      console.log("nerd");
+      return;
+    }
+
+    var bcg = JSON.parse(JSON.stringify(gameboard));
+    if (pieceObj.icon === "Pawn") {
+      bcg = ColorPawn(bcg, yIndex, xIndex, pieceObj.facing);
+    }
+    if (pieceObj.icon === "Queen") {
+      bcg = ColorQueen(bcg, yIndex, xIndex);
+    }
+    if (pieceObj.icon === "Bishop") {
+      bcg = ColorBishop(bcg, yIndex, xIndex);
+    }
+    if (pieceObj.icon === "Rook") {
+      bcg = ColorRook(bcg, yIndex, xIndex);
+    }
+    if (pieceObj.icon === "Knight") {
+      bcg = ColorKnight(bcg, yIndex, xIndex);
+    }
+    setGameboardColors(bcg);
+  }
+  function handlePieceSelect(currentY: any, currentX: any) {
+    const pieceObj = gameboard[currentY][currentX];
+    handlePieceTooltip(pieceObj, currentY, currentX);
+    if (pieceObj?.id === activePiece?.id) {
+      setActivePiece({});
+      handlePieceTooltip(pieceObj, currentY, currentX);
+      return;
+    }
+    var bcg = JSON.parse(JSON.stringify(gameboard));
+    console.log(gameboard);
+    if (bcg[currentY] !== undefined) {
+      if (bcg[currentY][currentX] !== undefined) {
+        setActivePiece(pieceObj);
+        console.log(activePiece);
+        handlePieceTooltip(activePiece, currentY, currentX);
+      }
+    }
+
+    setGameboardColors(bcg);
+  }
+  function determineClassName(y: any, x: any) {
+    var class_name = "square ";
+    if ((y % 2 === 0 && x % 2 === 0) || (y % 2 === 1 && x % 2 === 1)) {
+      class_name += "dark ";
+    } else {
+      class_name += "light ";
+    }
+
+    if (
+      gameboardColors !== undefined &&
+      gameboardColors[y] !== undefined &&
+      gameboardColors[y][x] !== undefined
+    ) {
+      class_name += gameboardColors[y][x];
+      class_name += " ";
+    }
+    if (
+      gameboard[y] !== undefined &&
+      gameboard[y][x] !== undefined &&
+      gameboard[y][x].id !== undefined &&
+      activePiece?.id === gameboard[y][x].id
+    )
+      class_name += "inplay ";
+    return class_name;
   }
   return (
     <div className="App">
@@ -48,12 +129,12 @@ function App() {
           <div className="row">
             {size.map((i2, xIndex) => (
               <div
-                className={
-                  (yIndex % 2 === 0 && xIndex % 2 == 0) ||
-                  (yIndex % 2 == 1 && xIndex % 2 == 1)
-                    ? "square dark"
-                    : "square light"
+                onMouseOver={() =>
+                  handlePieceTooltip(gameboard[yIndex][xIndex], yIndex, xIndex)
                 }
+                onClick={() => handlePieceSelect(yIndex, xIndex)}
+                onMouseLeave={() => handlePreviewReset()}
+                className={determineClassName(yIndex, xIndex)}
               >
                 {gameboard[yIndex] !== undefined &&
                 gameboard[yIndex][xIndex] !== undefined &&
@@ -62,8 +143,8 @@ function App() {
                     src={
                       "assets/pieces/" + gameboard[yIndex][xIndex].icon + ".svg"
                     }
-                    className={gameboard[yIndex][xIndex].color + " " + gameboardColors[yIndex][xIndex]}
-                    onMouseOver={() => handlePieceMove(gameboard[yIndex][xIndex], yIndex, xIndex)}
+                    className={gameboard[yIndex][xIndex].color}
+                    alt={gameboard[yIndex][xIndex].icon}
                   />
                 ) : (
                   ""

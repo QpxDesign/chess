@@ -1,166 +1,258 @@
 [
-  { "id": "1", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "0" },
-  { "id": "2", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "1" },
-  { "id": "3", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "2" },
-  { "id": "4", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "3" },
-  { "id": "5", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "4" },
-  { "id": "6", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "5" },
-  { "id": "7", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "6" },
-  { "id": "8", "icon": "Pawn", "color": "white", "rowNum": "1", "colNum": "7" },
-  { "id": "9", "icon": "Rook", "color": "white", "rowNum": "0", "colNum": "0" },
+  {
+    "id": "1",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "1",
+    "colNum": "0",
+    "facing": "down"
+  },
+  {
+    "id": "2",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "1",
+    "colNum": "1",
+    "facing": "down"
+  },
+  {
+    "id": "3",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "1",
+    "colNum": "2",
+    "facing": "down"
+  },
+  {
+    "id": "4",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "4",
+    "colNum": "3",
+    "facing": "down"
+  },
+  {
+    "id": "5",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "4",
+    "colNum": "4",
+    "facing": "down"
+  },
+  {
+    "id": "6",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "1",
+    "colNum": "5",
+    "facing": "down"
+  },
+  {
+    "id": "7",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "1",
+    "colNum": "6",
+    "facing": "down"
+  },
+  {
+    "id": "8",
+    "icon": "Pawn",
+    "color": "white",
+    "rowNum": "3",
+    "colNum": "0",
+    "facing": "down"
+  },
+  {
+    "id": "9",
+    "icon": "Rook",
+    "color": "white",
+    "rowNum": "0",
+    "colNum": "0",
+    "facing": "down"
+  },
   {
     "id": "10",
     "icon": "Knight",
     "color": "white",
-    "rowNum": "0",
-    "colNum": "1"
+    "rowNum": "5",
+    "colNum": "4",
+    "facing": "down"
   },
   {
-    "id": "12",
+    "id": "11",
     "icon": "Bishop",
     "color": "white",
     "rowNum": "0",
-    "colNum": "2"
+    "colNum": "2",
+    "facing": "down"
   },
   {
     "id": "12",
     "icon": "Queen",
     "color": "white",
-    "rowNum": "0",
-    "colNum": "3"
+    "rowNum": "3",
+    "colNum": "3",
+    "facing": "down"
   },
   {
     "id": "13",
     "icon": "King",
     "color": "white",
     "rowNum": "0",
-    "colNum": "4"
+    "colNum": "4",
+    "facing": "down"
   },
   {
     "id": "14",
     "icon": "Bishop",
     "color": "white",
     "rowNum": "0",
-    "colNum": "5"
+    "colNum": "5",
+    "facing": "down"
   },
   {
     "id": "15",
     "icon": "Knight",
     "color": "white",
     "rowNum": "0",
-    "colNum": "6"
+    "colNum": "6",
+    "facing": "down"
   },
   {
     "id": "16",
     "icon": "Rook",
     "color": "white",
     "rowNum": "0",
-    "colNum": "7"
+    "colNum": "7",
+    "facing": "down"
   },
   {
     "id": "17",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "0"
+    "colNum": "0",
+    "facing": "up"
   },
   {
     "id": "18",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "1"
+    "colNum": "1",
+    "facing": "up"
   },
   {
     "id": "19",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "2"
+    "colNum": "2",
+    "facing": "up"
   },
   {
     "id": "20",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "3"
+    "colNum": "3",
+    "facing": "up"
   },
   {
     "id": "21",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "4"
+    "colNum": "4",
+    "facing": "up"
   },
   {
     "id": "22",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "5"
+    "colNum": "5",
+    "facing": "up"
   },
   {
     "id": "23",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "6"
+    "colNum": "6",
+    "facing": "up"
   },
   {
     "id": "24",
     "icon": "Pawn",
     "color": "black",
     "rowNum": "6",
-    "colNum": "7"
+    "colNum": "7",
+    "facing": "up"
   },
   {
     "id": "25",
     "icon": "Rook",
     "color": "black",
     "rowNum": "7",
-    "colNum": "0"
+    "colNum": "0",
+    "facing": "up"
   },
   {
     "id": "26",
     "icon": "Knight",
     "color": "black",
     "rowNum": "7",
-    "colNum": "1"
+    "colNum": "1",
+    "facing": "up"
   },
   {
     "id": "27",
     "icon": "Bishop",
     "color": "black",
     "rowNum": "7",
-    "colNum": "2"
+    "colNum": "2",
+    "facing": "up"
   },
   {
     "id": "28",
     "icon": "Queen",
     "color": "black",
     "rowNum": "7",
-    "colNum": "3"
+    "colNum": "3",
+    "facing": "up"
   },
   {
     "id": "29",
     "icon": "King",
     "color": "black",
     "rowNum": "7",
-    "colNum": "4"
+    "colNum": "4",
+    "facing": "up"
   },
   {
     "id": "30",
     "icon": "Bishop",
     "color": "black",
     "rowNum": "7",
-    "colNum": "5"
+    "colNum": "5",
+    "facing": "up"
   },
   {
     "id": "31",
     "icon": "Knight",
     "color": "black",
     "rowNum": "7",
-    "colNum": "6"
+    "colNum": "6",
+    "facing": "up"
   },
-  { "id": "32", "icon": "Rook", "color": "black", "rowNum": "7", "colNum": "7" }
+  {
+    "id": "32",
+    "icon": "Rook",
+    "color": "black",
+    "rowNum": "7",
+    "colNum": "7",
+    "facing": "up"
+  }
 ]

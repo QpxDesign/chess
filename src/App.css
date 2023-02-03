@@ -26,18 +26,24 @@ body {
   color: white;
 }
 .light {
-  background-color: red;
+  background-color: #a3a3a3;
 }
 .dark {
-  background-color: blue;
+  background-color: #7f1d1d;
 }
 .white {
   color: white !important;
-  fill:#ffffff !important;
+  fill: #ffffff !important;
 }
 .green {
   background-color: green !important;
 }
-.default {
-  background-color: green;
+.square:hover {
+  background-color: red;
+}
+.inplay {
+  background-color: yellow !important;
+}
+.purple {
+  background-color: purple !important;
 }
