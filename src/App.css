@@ -2,6 +2,9 @@ body {
   margin: 0;
   padding: 0;
 }
+h1,h2,h3,h4,h5,p {
+  margin: 0;
+}
 .chess-board {
   display: flex;
   max-width: 100vw;
@@ -46,4 +49,57 @@ body {
 }
 .purple {
   background-color: purple !important;
+}
+.inhand {
+  width: 1em !important;
+  background-color: indianred;
+}
+.welcomescreen-wrapper {
+  width: 50em;
+  height: 30em;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background-color: black;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  color: white;
+  padding: 1.2em;
+  font-family: "Source Serif Pro", serif;
+  font-weight: 800;
+}
+
+.welcomescreen-background {
+  content:"";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(000,000,000,.6 );
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+}
+
+h2 {
+  font-weight: 200;
+  font-size: 1.3em;
+}
+[draggable=true] {
+  cursor: move;
+}
+.resizable {
+  overflow: scroll;
+  resize: both;
+  max-width: 300px;
+  max-height: 460px;
+  border: 1px solid black;
+  min-width: 50px;
+  min-height: 50px;
+  background-color: skyblue;
 }
