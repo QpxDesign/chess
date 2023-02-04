@@ -72,9 +72,8 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
     ) {
       bcg[yIndex][xIndex - leftN] = "purple";
     }
-  } catch(e) {}
+  } catch (e) {}
 
-  
   //diagonals
   var sidewaysForwardRightN = 1;
   try {
@@ -98,7 +97,7 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
       bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] =
         "purple";
     }
-  } catch(e){}
+  } catch (e) {}
 
   var sidewaysForwardLeftN = 1;
   try {
@@ -108,21 +107,22 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
       bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
         undefined
     ) {
-      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] = "green";
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] =
+        "green";
       sidewaysForwardLeftN++;
     }
     if (
       bcg[yIndex + sidewaysForwardLeftN] !== undefined &&
       bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
         undefined &&
-      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN].color !==
-        bcg[yIndex][xIndex].color
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN]
+        .color !== bcg[yIndex][xIndex].color
     ) {
       bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] =
         "purple";
     }
-  } catch(e) {}
- 
+  } catch (e) {}
+
   var sidewaysBackwardsLeftN = 1;
   try {
     while (
@@ -146,16 +146,18 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
       bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] =
         "purple";
     }
-  } catch(e) {}
- 
+  } catch (e) {}
+
   var sidewaysBackwardsRightN = 1;
   try {
     while (
       bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
-      bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN] ===
-        null &&
-      bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN] !==
-        undefined
+      bcg[yIndex - sidewaysBackwardsRightN][
+        xIndex + sidewaysBackwardsRightN
+      ] === null &&
+      bcg[yIndex - sidewaysBackwardsRightN][
+        xIndex + sidewaysBackwardsRightN
+      ] !== undefined
     ) {
       bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN] =
         "green";
@@ -171,7 +173,217 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
       bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN] =
         "purple";
     }
-  } catch(e){}
+  } catch (e) {}
 
   return bcg;
+}
+export function canQueenMove(
+  bcg: any,
+  yIndex: any,
+  xIndex: any,
+  newY: any,
+  newX: any
+) {
+  //forward/backward
+  var forwardN = 1;
+  try {
+    while (
+      bcg[yIndex + forwardN][xIndex] === null &&
+      bcg[yIndex + forwardN][xIndex] !== undefined
+    ) {
+      if (yIndex + forwardN === newY && xIndex === newX) return true;
+      forwardN++;
+    }
+    if (
+      bcg[yIndex + forwardN] !== undefined &&
+      bcg[yIndex + forwardN][xIndex] !== undefined &&
+      bcg[yIndex + forwardN][xIndex].color !== bcg[yIndex][xIndex].color
+    ) {
+      if (yIndex + forwardN === newY && xIndex === newX) return true;
+    }
+  } catch (e) {}
+
+  var backwardN = 1;
+  try {
+    while (
+      bcg[yIndex - backwardN] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] === null
+    ) {
+      if (yIndex - backwardN === newY && xIndex === newX) return true;
+      backwardN++;
+    }
+    if (
+      bcg[yIndex - backwardN] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] !== undefined &&
+      bcg[yIndex - backwardN][xIndex].color !== bcg[yIndex][xIndex].color
+    ) {
+      if (yIndex - backwardN === newY && xIndex === newX) return true;
+    }
+  } catch (e) {}
+
+  //sides
+  var rightN = 1;
+
+  try {
+    while (
+      bcg[yIndex][xIndex + rightN] === null &&
+      bcg[yIndex][xIndex + rightN] !== undefined
+    ) {
+      if (yIndex === newY && xIndex + rightN === newX) return true;
+      rightN++;
+    }
+    if (
+      bcg[yIndex] !== undefined &&
+      bcg[yIndex][xIndex + rightN] !== undefined &&
+      bcg[yIndex][xIndex + rightN].color !== bcg[yIndex][xIndex].color
+    ) {
+      if (yIndex === newY && xIndex + rightN === newX) return true;
+    }
+  } catch (e) {}
+  var leftN = 1;
+  try {
+    while (
+      bcg[yIndex][xIndex - leftN] === null &&
+      bcg[yIndex][xIndex - leftN] !== undefined
+    ) {
+      if (yIndex === newY && xIndex - leftN === newX) return true;
+      leftN++;
+    }
+    if (
+      bcg[yIndex] !== undefined &&
+      bcg[yIndex][xIndex - leftN] !== undefined &&
+      bcg[yIndex][xIndex - leftN].color !== bcg[yIndex][xIndex].color
+    ) {
+      if (yIndex === newY && xIndex - leftN === newX) return true;
+    }
+  } catch (e) {}
+
+  //diagonals
+  var sidewaysForwardRightN = 1;
+  try {
+    while (
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] ===
+        null &&
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] !==
+        undefined
+    ) {
+      if (
+        yIndex + sidewaysForwardRightN === newY &&
+        xIndex + sidewaysForwardRightN === newX
+      )
+        return true;
+
+      sidewaysForwardRightN++;
+    }
+    if (
+      bcg[yIndex + sidewaysForwardRightN] !== undefined &&
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] !==
+        undefined &&
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      if (
+        yIndex + sidewaysForwardRightN === newY &&
+        xIndex + sidewaysForwardRightN === newX
+      )
+        return true;
+    }
+  } catch (e) {}
+
+  var sidewaysForwardLeftN = 1;
+  try {
+    while (
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] ===
+        null &&
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
+        undefined
+    ) {
+      if (
+        yIndex + sidewaysForwardLeftN === newY &&
+        xIndex - sidewaysForwardLeftN === newX
+      )
+        return true;
+      sidewaysForwardLeftN++;
+    }
+    if (
+      bcg[yIndex + sidewaysForwardLeftN] !== undefined &&
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
+        undefined &&
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      if (
+        yIndex + sidewaysForwardLeftN === newY &&
+        xIndex - sidewaysForwardLeftN === newX
+      )
+        return true;
+    }
+  } catch (e) {}
+
+  var sidewaysBackwardsLeftN = 1;
+  try {
+    while (
+      bcg[yIndex - sidewaysBackwardsLeftN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] ===
+        null &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] !==
+        undefined
+    ) {
+      if (
+        yIndex - sidewaysBackwardsLeftN === newY &&
+        xIndex - sidewaysBackwardsLeftN === newX
+      )
+        return true;
+      sidewaysBackwardsLeftN++;
+    }
+    if (
+      bcg[yIndex - sidewaysBackwardsLeftN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] !==
+        undefined &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      if (
+        yIndex - sidewaysBackwardsLeftN === newY &&
+        xIndex - sidewaysBackwardsLeftN === newX
+      )
+        return true;
+    }
+  } catch (e) {}
+
+  var sidewaysBackwardsRightN = 1;
+  try {
+    while (
+      bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsRightN][
+        xIndex + sidewaysBackwardsRightN
+      ] === null &&
+      bcg[yIndex - sidewaysBackwardsRightN][
+        xIndex + sidewaysBackwardsRightN
+      ] !== undefined
+    ) {
+      if (
+        yIndex - sidewaysBackwardsRightN === newY &&
+        xIndex + sidewaysBackwardsRightN === newX
+      )
+        return true;
+      sidewaysBackwardsRightN++;
+    }
+    if (
+      bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsLeftN] !==
+        undefined &&
+      bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      if (
+        yIndex - sidewaysBackwardsRightN === newY &&
+        xIndex + sidewaysBackwardsRightN === newX
+      )
+        return true;
+    }
+  } catch (e) {}
+
+  return false;
 }
