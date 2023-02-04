@@ -8,51 +8,90 @@ import { canQueenMove, ColorQueen } from "../functions/Queen";
 import { canRookMove, ColorRook } from "../functions/Rook";
 import { canKingMove, ColorKing } from "../functions/King";
 import uuid from "react-uuid";
+import { useParams } from "react-router-dom";
 
 export default function Board() {
   const size = [1, 2, 3, 4, 5, 6, 7, 8];
   const [gameboard, setGameboard]: any = useState([[], []]);
+  const [movesLedger, setMovesLedger]: any = useState([]);
   const [gameboardColors, setGameboardColors]: any = useState([[], []]);
   const [activePiece, setActivePiece]: any = useState({});
   const [inHand, setInHand]: any = useState("");
+  const { gc } = useParams();
+
   // create gameboard and gameboardColors
   useEffect(() => {
     console.log("boo");
     const gb = new Array(8);
     const bcg = new Array(8);
+    // add default colors
     for (var i = 0; i < gb.length; i++) {
-      gb[i] = new Array(8);
-    }
-    for (var i = 0; i < bcg.length; i++) {
       bcg[i] = new Array(8);
     }
-    for (var x1 = 0; x1 < bcg.length; x1++) {
-      for (var x2 = 0; x2 < bcg.length; x2++) {
-        gb[x1][x2] = null;
-      }
-    }
-
-    // add default colors
-    for (var bh1 = 0; bh1 < bcg.length; bh1++) {
-      for (var bh2 = 0; bh2 < bcg.length; bh2++) {
+    for (var bh1 = 0; bh1 < gb.length; bh1++) {
+      for (var bh2 = 0; bh2 < gb.length; bh2++) {
         bcg[bh1][bh2] = "";
       }
     }
     setGameboardColors(...bcg);
 
-    DefaultPositions.map((pos) => {
-      const pieceObject = {
-        icon: pos.icon,
-        id: pos.id,
-        color: pos.color,
-        facing: pos.facing,
-      };
-      gb[Number(pos.rowNum)][Number(pos.colNum)] = pieceObject;
-    });
-    setGameboard(gb);
+    getGameboardFromCode();
   }, []);
 
-  // add pieces to default positions
+  async function handleMove(
+    gb: any,
+    pieceOBJ: any,
+    oy: any,
+    ox: any,
+    ny: any,
+    nx: any
+  ) {
+    console.log(gb);
+    console.log(JSON.stringify(gb));
+    if (gb[0].length !== 0) {
+      let mo = {
+        pieceOBJ: pieceOBJ,
+        oldY: oy,
+        oldX: ox,
+        newY: ny,
+        newX: nx,
+        timestamp: Date.now(),
+      };
+      let data = {
+        GameCode: gc,
+        gameboard: JSON.stringify(gb),
+        moveData: JSON.stringify(mo),
+      };
+
+      await fetch("http://localhost:3001/handle-move", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(data),
+      });
+    }
+  }
+  async function getGameboardFromCode() {
+    let data = {
+      GameCode: gc,
+    };
+
+    await fetch("http://localhost:3001/get-gameboard-from-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(data),
+    }).then((r) =>
+      r.json().then((r2) => {
+        setGameboard(r2.gameboard);
+        setMovesLedger(r2.movesLedger);
+      })
+    );
+  }
   function handlePreviewReset() {
     const gbc = new Array(8);
     for (var i = 0; i < gbc.length; i++) {
@@ -63,13 +102,15 @@ export default function Board() {
         gbc[bh1][bh2] = "";
       }
     }
-    setGameboardColors(gbc);
+    setGameboardColors(...gbc);
   }
-
   function handlePieceTooltip(pieceObj: any, yIndex: any, xIndex: any) {
+    const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
+
     if (pieceObj === null || pieceObj === undefined) {
       return;
     }
+
     var gb = JSON.parse(JSON.stringify(gameboard));
     var gbc = JSON.parse(JSON.stringify(gameboardColors));
     if (pieceObj.icon === "Pawn") {
@@ -93,32 +134,55 @@ export default function Board() {
     setGameboardColors(gbc);
   }
   function handleMouseOver(pieceObj: any, yIndex: any, xIndex: any) {
+    const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
     if (activePiece === undefined || activePiece.id === undefined) {
-      handlePieceTooltip(pieceObj, yIndex, xIndex);
+      if (
+        pieceObj !== null &&
+        pieceObj.color !== undefined &&
+        pieceObj.color === l
+      ) {
+        handlePieceTooltip(pieceObj, yIndex, xIndex);
+      }
     }
   }
+  function isMyMove() {
+    const l = JSON.parse(localStorage.getItem("user") ?? "{}");
+    console.log(movesLedger);
+    if (l === undefined || l.Color === undefined) return false;
 
+    if (movesLedger === undefined || movesLedger.length === 0) {
+      return true;
+    }
+    if (l.Color === movesLedger.at(-1).color) return false;
+    return false;
+  }
   function handleSquareClick(currentY: any, currentX: any) {
     var pieceObj = gameboard[currentY][currentX];
-    console.log("aabbcc");
     if (pieceObj !== null && pieceObj !== undefined) {
       console.log(pieceObj);
-
       if (
-        activePiece.id === undefined ||
-        pieceObj.id === undefined ||
-        activePiece?.id !== pieceObj?.id
+        (activePiece.id === undefined ||
+          pieceObj.id === undefined ||
+          activePiece?.id !== pieceObj?.id) &&
+        isMyMove()
       ) {
         Object.assign(pieceObj, { row: currentY ?? "" });
         Object.assign(pieceObj, { col: currentX ?? "" });
+        const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
 
         setActivePiece(pieceObj);
-        handlePieceTooltip(pieceObj, currentY, currentX);
+        if (
+          pieceObj !== null &&
+          pieceObj.color !== undefined &&
+          pieceObj.color === l
+        ) {
+          handlePieceTooltip(pieceObj, currentY, currentX);
+        }
       } else {
         setActivePiece({});
         handlePreviewReset();
       }
-    } else if (activePiece.id !== undefined) {
+    } else if (activePiece.id !== undefined && isMyMove()) {
       // handle piece move
       if (activePiece.icon === "Pawn") {
         if (
@@ -135,8 +199,17 @@ export default function Board() {
           newData[currentY][currentX] = activePiece;
           newData[activePiece.row][activePiece.col] = null;
           setGameboard(newData);
-          console.log(gameboard);
+          handleMove(
+            newData,
+            activePiece,
+            activePiece.row,
+            activePiece.col,
+            currentY,
+            currentX
+          );
+
           setActivePiece({});
+          window.location.reload();
         }
       }
       if (activePiece.icon === "Queen") {
@@ -153,9 +226,16 @@ export default function Board() {
           newData[currentY][currentX] = activePiece;
           newData[activePiece.row][activePiece.col] = null;
           setGameboard(newData);
-          console.log(gameboard);
+          handleMove(
+            newData,
+            activePiece,
+            activePiece.row,
+            activePiece.col,
+            currentY,
+            currentX
+          );
           setActivePiece({});
-          handlePreviewReset();
+          window.location.reload();
         }
       }
       if (activePiece.icon === "Bishop") {
@@ -172,8 +252,17 @@ export default function Board() {
           newData[currentY][currentX] = activePiece;
           newData[activePiece.row][activePiece.col] = null;
           setGameboard(newData);
+          handleMove(
+            newData,
+            activePiece,
+            activePiece.row,
+            activePiece.col,
+            currentY,
+            currentX
+          );
           console.log(gameboard);
           setActivePiece({});
+          window.location.reload();
         }
       }
       if (activePiece.icon === "Rook") {
@@ -190,8 +279,17 @@ export default function Board() {
           newData[currentY][currentX] = activePiece;
           newData[activePiece.row][activePiece.col] = null;
           setGameboard(newData);
+          handleMove(
+            newData,
+            activePiece,
+            activePiece.row,
+            activePiece.col,
+            currentY,
+            currentX
+          );
           console.log(gameboard);
           setActivePiece({});
+          window.location.reload();
         }
       }
       if (activePiece.icon === "Knight") {
@@ -208,8 +306,16 @@ export default function Board() {
           newData[currentY][currentX] = activePiece;
           newData[activePiece.row][activePiece.col] = null;
           setGameboard(newData);
-          console.log(gameboard);
+          handleMove(
+            newData,
+            activePiece,
+            activePiece.row,
+            activePiece.col,
+            currentY,
+            currentX
+          );
           setActivePiece({});
+          window.location.reload();
         }
       }
       if (activePiece.icon === "King") {
@@ -226,8 +332,16 @@ export default function Board() {
           newData[currentY][currentX] = activePiece;
           newData[activePiece.row][activePiece.col] = null;
           setGameboard(newData);
-          console.log(gameboard);
+          handleMove(
+            newData,
+            activePiece,
+            activePiece.row,
+            activePiece.col,
+            currentY,
+            currentX
+          );
           setActivePiece({});
+          window.location.reload();
         }
       }
       setGameboard(gameboard);
@@ -238,7 +352,6 @@ export default function Board() {
       handlePreviewReset();
     }
   }
-
   function determineClassName(y: any, x: any) {
     var class_name = "square ";
     if ((y % 2 === 0 && x % 2 === 0) || (y % 2 === 1 && x % 2 === 1)) {
@@ -280,7 +393,7 @@ export default function Board() {
                   item2 !== null &&
                   item2.icon !== undefined ? (
                     <img
-                      src={`assets/pieces/${item2.icon}-${item2.color}.svg`}
+                      src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
                       className={
                         item2.color +
                         " " +

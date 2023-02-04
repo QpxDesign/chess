@@ -1,15 +1,22 @@
-import React, { useEffect, useState } from "react";
 import "./App.css";
+import HomePage from "./pages/HomePage";
 import Board from "./components/Board";
-import WelcomeScreen from "./components/WelcomeScreen";
-import Sideboard from "./components/Sideboard";
+
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useParams,
+} from "react-router-dom";
 
 function App() {
   return (
-    <div className="App">
-      <Board />
-      <WelcomeScreen />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/gamecode/:gc" element={<Board />} />
+      </Routes>
+    </Router>
   );
 }
 
