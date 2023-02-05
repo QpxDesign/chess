@@ -28,7 +28,6 @@ export default function WelcomeScreen() {
 
   async function handleGameJoin() {
     console.log(code);
-    if (code.length === 8) return;
     let data = {
       Username: username,
       GameCode: code,
@@ -43,9 +42,8 @@ export default function WelcomeScreen() {
       },
       body: JSON.stringify(data),
     })
-      .then((r) => r.json())
-      .then((r2) => {
-        console.log(r2);
+      .then(() => {
+        console.log("as");
         window.location.pathname = "/gamecode/" + code;
       })
       .catch((e) => console.error(e));
