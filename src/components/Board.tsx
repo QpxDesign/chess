@@ -147,19 +147,24 @@ export default function Board() {
   }
   function isMyMove() {
     const l = JSON.parse(localStorage.getItem("user") ?? "{}");
-    console.log(movesLedger);
     if (l === undefined || l.Color === undefined) return false;
 
     if (movesLedger === undefined || movesLedger.length === 0) {
       return true;
     }
-    if (l.Color === movesLedger.at(-1).color) return false;
+    console.log(movesLedger[movesLedger.length - 1].pieceOBJ.color);
+    console.log(movesLedger.at(-1).color);
+    if (l.Color === movesLedger[movesLedger.length - 1].pieceOBJ.color) {
+      console.log();
+      return false;
+    } else if (l.Color !== movesLedger[movesLedger.length - 1].pieceOBJ.color) {
+      return true;
+    }
     return false;
   }
   function handleSquareClick(currentY: any, currentX: any) {
     var pieceObj = gameboard[currentY][currentX];
     if (pieceObj !== null && pieceObj !== undefined) {
-      console.log(pieceObj);
       if (
         (activePiece.id === undefined ||
           pieceObj.id === undefined ||
@@ -170,13 +175,14 @@ export default function Board() {
         Object.assign(pieceObj, { col: currentX ?? "" });
         const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
 
-        setActivePiece(pieceObj);
         if (
           pieceObj !== null &&
           pieceObj.color !== undefined &&
           pieceObj.color === l
         ) {
+          setActivePiece(pieceObj);
           handlePieceTooltip(pieceObj, currentY, currentX);
+          return;
         }
       } else {
         setActivePiece({});
@@ -184,6 +190,7 @@ export default function Board() {
       }
     } else if (activePiece.id !== undefined && isMyMove()) {
       // handle piece move
+      console.log("a");
       if (activePiece.icon === "Pawn") {
         if (
           canPawnMove(
@@ -376,42 +383,64 @@ export default function Board() {
   }
 
   return (
-    <div className="chess-board">
-      {gameboard.map((item1: any, yIndex: any) => {
-        return (
-          <div className="row" key={item1.length * yIndex + uuid()}>
-            {item1.map((item2: any, xIndex: any) => {
-              return (
-                <div
-                  key={String(item2?.id) + uuid()}
-                  onMouseOver={() => handleMouseOver(item2, yIndex, xIndex)}
-                  onMouseLeave={() => handleMouseLeave()}
-                  onClick={() => handleSquareClick(yIndex, xIndex)}
-                  className={determineClassName(yIndex, xIndex)}
-                >
-                  {item2 !== undefined &&
-                  item2 !== null &&
-                  item2.icon !== undefined ? (
-                    <img
-                      src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
-                      className={
-                        item2.color +
-                        " " +
-                        (inHand === item2.id ? "inplay" : "")
-                      }
-                      alt={item2.icon}
-                      onClick={() => handleSquareClick(yIndex, xIndex)}
-                      onDrag={() => setInHand(item2.id)}
-                    />
-                  ) : (
-                    ""
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
-    </div>
+    <>
+      <button
+        onClick={() =>
+          localStorage.setItem(
+            "user",
+            '{"Username":"Quinn555","Color":"black"}'
+          )
+        }
+      >
+        Set Local Storage Black
+      </button>
+      <button
+        onClick={() =>
+          localStorage.setItem(
+            "user",
+            '{"Username":"Quinn555","Color":"white"}'
+          )
+        }
+      >
+        set Local Storage White
+      </button>
+      <div className="chess-board">
+        {gameboard.map((item1: any, yIndex: any) => {
+          return (
+            <div className="row" key={item1.length * yIndex + uuid()}>
+              {item1.map((item2: any, xIndex: any) => {
+                return (
+                  <div
+                    key={String(item2?.id) + uuid()}
+                    onMouseOver={() => handleMouseOver(item2, yIndex, xIndex)}
+                    onMouseLeave={() => handleMouseLeave()}
+                    onClick={() => handleSquareClick(yIndex, xIndex)}
+                    className={determineClassName(yIndex, xIndex)}
+                  >
+                    {item2 !== undefined &&
+                    item2 !== null &&
+                    item2.icon !== undefined ? (
+                      <img
+                        src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
+                        className={
+                          item2.color +
+                          " " +
+                          (inHand === item2.id ? "inplay" : "")
+                        }
+                        alt={item2.icon}
+                        onClick={() => handleSquareClick(yIndex, xIndex)}
+                        onDrag={() => setInHand(item2.id)}
+                      />
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
