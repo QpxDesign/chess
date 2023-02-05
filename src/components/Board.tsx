@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import DefaultPositions from "../assets/default-positions.json";
+import React, { useState, useEffect } from "react";
 import { canBishopMove, ColorBishop } from "../functions/Bishop";
 import { canKnightMove, ColorKnight } from "../functions/Knight";
 import { ColorPawn } from "../functions/Pawn";
@@ -9,6 +8,8 @@ import { canRookMove, ColorRook } from "../functions/Rook";
 import { canKingMove, ColorKing } from "../functions/King";
 import uuid from "react-uuid";
 import { useParams } from "react-router-dom";
+import { handleMove } from "../functions/handleMove";
+import { handlePieceElimination } from "../functions/handlePieceElimination";
 
 export default function Board() {
   const size = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -21,7 +22,6 @@ export default function Board() {
 
   // create gameboard and gameboardColors
   useEffect(() => {
-    console.log("boo");
     const gb = new Array(8);
     const bcg = new Array(8);
     // add default colors
@@ -38,46 +38,10 @@ export default function Board() {
     getGameboardFromCode();
   }, []);
 
-  async function handleMove(
-    gb: any,
-    pieceOBJ: any,
-    oy: any,
-    ox: any,
-    ny: any,
-    nx: any
-  ) {
-    console.log(gb);
-    console.log(JSON.stringify(gb));
-    if (gb[0].length !== 0) {
-      let mo = {
-        pieceOBJ: pieceOBJ,
-        oldY: oy,
-        oldX: ox,
-        newY: ny,
-        newX: nx,
-        timestamp: Date.now(),
-      };
-      let data = {
-        GameCode: gc,
-        gameboard: JSON.stringify(gb),
-        moveData: JSON.stringify(mo),
-      };
-
-      await fetch("http://localhost:3001/handle-move", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(data),
-      });
-    }
-  }
   async function getGameboardFromCode() {
     let data = {
       GameCode: gc,
     };
-
     await fetch("http://localhost:3001/get-gameboard-from-code", {
       method: "POST",
       headers: {
@@ -85,12 +49,13 @@ export default function Board() {
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(data),
-    }).then((r) =>
-      r.json().then((r2) => {
+    })
+      .then((r) => r.json())
+      .then((r2) => {
         setGameboard(r2.gameboard);
         setMovesLedger(r2.movesLedger);
       })
-    );
+      .catch((error) => console.error(error));
   }
   function handlePreviewReset() {
     const gbc = new Array(8);
@@ -139,7 +104,8 @@ export default function Board() {
       if (
         pieceObj !== null &&
         pieceObj.color !== undefined &&
-        pieceObj.color === l
+        pieceObj.color === l &&
+        isMyMove()
       ) {
         handlePieceTooltip(pieceObj, yIndex, xIndex);
       }
@@ -152,10 +118,7 @@ export default function Board() {
     if (movesLedger === undefined || movesLedger.length === 0) {
       return true;
     }
-    console.log(movesLedger[movesLedger.length - 1].pieceOBJ.color);
-    console.log(movesLedger.at(-1).color);
     if (l.Color === movesLedger[movesLedger.length - 1].pieceOBJ.color) {
-      console.log();
       return false;
     } else if (l.Color !== movesLedger[movesLedger.length - 1].pieceOBJ.color) {
       return true;
@@ -164,6 +127,30 @@ export default function Board() {
   }
   function handleSquareClick(currentY: any, currentX: any) {
     var pieceObj = gameboard[currentY][currentX];
+    const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
+    console.log("a");
+    if (
+      activePiece.id !== undefined &&
+      gameboard[currentY][currentX] !== null &&
+      activePiece.color !== gameboard[currentY][currentX].color
+    ) {
+      if (
+        handlePieceElimination(
+          currentY,
+          currentX,
+          activePiece,
+          gameboard,
+          gc
+        ) !== undefined
+      ) {
+        setGameboard(
+          handlePieceElimination(currentY, currentX, activePiece, gameboard, gc)
+        );
+        setActivePiece({});
+      }
+
+      return;
+    }
     if (pieceObj !== null && pieceObj !== undefined) {
       if (
         (activePiece.id === undefined ||
@@ -173,7 +160,6 @@ export default function Board() {
       ) {
         Object.assign(pieceObj, { row: currentY ?? "" });
         Object.assign(pieceObj, { col: currentX ?? "" });
-        const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
 
         if (
           pieceObj !== null &&
@@ -190,7 +176,7 @@ export default function Board() {
       }
     } else if (activePiece.id !== undefined && isMyMove()) {
       // handle piece move
-      console.log("a");
+
       if (activePiece.icon === "Pawn") {
         if (
           canPawnMove(
@@ -212,7 +198,8 @@ export default function Board() {
             activePiece.row,
             activePiece.col,
             currentY,
-            currentX
+            currentX,
+            gc
           );
 
           setActivePiece({});
@@ -239,7 +226,8 @@ export default function Board() {
             activePiece.row,
             activePiece.col,
             currentY,
-            currentX
+            currentX,
+            gc
           );
           setActivePiece({});
           window.location.reload();
@@ -265,9 +253,9 @@ export default function Board() {
             activePiece.row,
             activePiece.col,
             currentY,
-            currentX
+            currentX,
+            gc
           );
-          console.log(gameboard);
           setActivePiece({});
           window.location.reload();
         }
@@ -292,9 +280,10 @@ export default function Board() {
             activePiece.row,
             activePiece.col,
             currentY,
-            currentX
+            currentX,
+            gc
           );
-          console.log(gameboard);
+
           setActivePiece({});
           window.location.reload();
         }
@@ -319,7 +308,8 @@ export default function Board() {
             activePiece.row,
             activePiece.col,
             currentY,
-            currentX
+            currentX,
+            gc
           );
           setActivePiece({});
           window.location.reload();
@@ -345,7 +335,8 @@ export default function Board() {
             activePiece.row,
             activePiece.col,
             currentY,
-            currentX
+            currentX,
+            gc
           );
           setActivePiece({});
           window.location.reload();
@@ -412,8 +403,6 @@ export default function Board() {
                 return (
                   <div
                     key={String(item2?.id) + uuid()}
-                    onMouseOver={() => handleMouseOver(item2, yIndex, xIndex)}
-                    onMouseLeave={() => handleMouseLeave()}
                     onClick={() => handleSquareClick(yIndex, xIndex)}
                     className={determineClassName(yIndex, xIndex)}
                   >
@@ -428,8 +417,11 @@ export default function Board() {
                           (inHand === item2.id ? "inplay" : "")
                         }
                         alt={item2.icon}
-                        onClick={() => handleSquareClick(yIndex, xIndex)}
                         onDrag={() => setInHand(item2.id)}
+                        onMouseEnter={() =>
+                          handleMouseOver(item2, yIndex, xIndex)
+                        }
+                        onMouseLeave={() => handleMouseLeave()}
                       />
                     ) : (
                       ""

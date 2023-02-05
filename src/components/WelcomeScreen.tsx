@@ -19,12 +19,15 @@ export default function WelcomeScreen() {
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(data),
-    }).then((r) =>
-      r.json().then((r2) => setLink(window.location + "gamecode/" + r2.gID))
-    );
+    })
+      .then((r) =>
+        r.json().then((r2) => setLink(window.location + "gamecode/" + r2.gID))
+      )
+      .catch((e) => console.error(e));
   }
 
   async function handleGameJoin() {
+    console.log(code);
     if (code.length === 8) return;
     let data = {
       Username: username,
@@ -41,7 +44,11 @@ export default function WelcomeScreen() {
       body: JSON.stringify(data),
     })
       .then((r) => r.json())
-      .then((r2) => (window.location.pathname = "/gamecode/" + code));
+      .then((r2) => {
+        console.log(r2);
+        window.location.pathname = "/gamecode/" + code;
+      })
+      .catch((e) => console.error(e));
   }
   return (
     <>
@@ -49,18 +56,24 @@ export default function WelcomeScreen() {
       <div className="welcomescreen-wrapper">
         {" "}
         <h1>Welcome to qChess</h1>
-        <button onClick={() => handleGenerateLink()}>Generate link</button>
-        <input value={link}></input>
         <input
           value={username}
+          placeholder="username"
           onChange={(e) => setUsername(e.target.value)}
         ></input>
-        <button onClick={() => handleGameJoin()}>Join Game</button>
-        <input
-          placeholder="code"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-        />
+        <div className="v-stack"></div>
+        <div className="h-stack">
+          <input value={link} placeholder="link"></input>
+          <button onClick={() => handleGenerateLink()}>Generate link</button>
+        </div>
+        <div className="h-stack">
+          <input
+            placeholder="code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+          />
+          <button onClick={() => handleGameJoin()}>Join Game</button>
+        </div>
         <div className="modes-wrapper"></div>
       </div>
     </>

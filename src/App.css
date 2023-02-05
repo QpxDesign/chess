@@ -127,3 +127,7 @@ h2 {
 .move-wrapper:nth-child(odd) {
   background-color: beige;
 }
+.h-stack {
+  display: flex;
+  gap: 1em;
+}
