@@ -30,11 +30,5 @@ export async function handleMove(
       },
       body: JSON.stringify(data),
     }).catch((e) => console.log(e));
-    const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
-    if (l === "white") {
-      localStorage.setItem("user", '{"Username":"Quinn555","Color":"black"}');
-    } else if (l === "black") {
-      localStorage.setItem("user", '{"Username":"Quinn555","Color":"white"}');
-    }
   }
 }

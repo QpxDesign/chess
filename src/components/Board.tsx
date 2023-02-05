@@ -39,9 +39,11 @@ export default function Board() {
   }, []);
 
   async function getGameboardFromCode() {
+    if (gc?.length !== 8) return;
     let data = {
       GameCode: gc,
     };
+
     await fetch("http://localhost:3001/get-gameboard-from-code", {
       method: "POST",
       headers: {
@@ -52,11 +54,24 @@ export default function Board() {
     })
       .then((r) => r.json())
       .then((r2) => {
-        setGameboard(r2.gameboard);
-        setMovesLedger(r2.movesLedger);
+        if (!r2.error) {
+          setGameboard(r2.gameboard);
+          setMovesLedger(r2.movesLedger);
+        } else {
+          console.log(r2);
+          window.location.pathname = "/";
+          localStorage.clear();
+        }
       })
       .catch((error) => console.error(error));
   }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getGameboardFromCode();
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, []);
   function handlePreviewReset() {
     const gbc = new Array(8);
     for (var i = 0; i < gbc.length; i++) {
@@ -375,26 +390,6 @@ export default function Board() {
 
   return (
     <>
-      <button
-        onClick={() =>
-          localStorage.setItem(
-            "user",
-            '{"Username":"Quinn555","Color":"black"}'
-          )
-        }
-      >
-        Set Local Storage Black
-      </button>
-      <button
-        onClick={() =>
-          localStorage.setItem(
-            "user",
-            '{"Username":"Quinn555","Color":"white"}'
-          )
-        }
-      >
-        set Local Storage White
-      </button>
       <div className="chess-board">
         {gameboard.map((item1: any, yIndex: any) => {
           return (

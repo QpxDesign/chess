@@ -20,14 +20,19 @@ export default function WelcomeScreen() {
       },
       body: JSON.stringify(data),
     })
-      .then((r) =>
-        r.json().then((r2) => setLink(window.location + "gamecode/" + r2.gID))
-      )
+      .then((r) => r.json())
+      .then((r2) => {
+        localStorage.setItem(
+          "user",
+          `{"Username":"${username}","Color":"white"}`
+        );
+        setLink(window.location + "gamecode/" + r2.gID);
+      })
+
       .catch((e) => console.error(e));
   }
 
   async function handleGameJoin() {
-    console.log(code);
     let data = {
       Username: username,
       GameCode: code,
@@ -42,9 +47,16 @@ export default function WelcomeScreen() {
       },
       body: JSON.stringify(data),
     })
-      .then(() => {
-        console.log("as");
-        window.location.pathname = "/gamecode/" + code;
+      .then((r) => r.json())
+      .then((r2) => {
+        console.log(r2);
+        if (r2.allowJoin) {
+          localStorage.setItem(
+            "user",
+            `{"Username":"${username}","Color":"black"}`
+          );
+          window.location.pathname = "/gamecode/" + code;
+        }
       })
       .catch((e) => console.error(e));
   }
@@ -62,7 +74,9 @@ export default function WelcomeScreen() {
         <div className="v-stack"></div>
         <div className="h-stack">
           <input value={link} placeholder="link"></input>
-          <button onClick={() => handleGenerateLink()}>Generate link</button>
+          <button onClick={() => handleGenerateLink()}>
+            Generate link (Use this to join)
+          </button>
         </div>
         <div className="h-stack">
           <input
@@ -70,7 +84,9 @@ export default function WelcomeScreen() {
             value={code}
             onChange={(e) => setCode(e.target.value)}
           />
-          <button onClick={() => handleGameJoin()}>Join Game</button>
+          <button onClick={() => handleGameJoin()}>
+            Join Game (Send this to who you want to join)
+          </button>
         </div>
         <div className="modes-wrapper"></div>
       </div>
