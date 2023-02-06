@@ -44,7 +44,7 @@ export default function Board() {
       GameCode: gc,
     };
 
-    await fetch("http://localhost:3001/get-gameboard-from-code", {
+    await fetch("https://chess-api.quinnpatwardhan.com/get-gameboard-from-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

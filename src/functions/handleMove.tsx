@@ -22,7 +22,7 @@ export async function handleMove(
       moveData: JSON.stringify(mo),
     };
 
-    await fetch("http://localhost:3001/handle-move", {
+    await fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
