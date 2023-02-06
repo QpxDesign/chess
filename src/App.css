@@ -10,6 +10,10 @@ h5,
 p {
   margin: 0;
 }
+input {
+  font-family: "Source Serif Pro";
+  font-size: 1.2em;
+}
 .chess-board {
   display: flex;
   max-width: 100vw;
@@ -17,7 +21,6 @@ p {
   height: 100vh;
   aspect-ratio: 1/1;
   flex-direction: column;
-  margin: 0 auto;
 }
 .row {
   display: flex;
@@ -105,10 +108,11 @@ h2 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: yellow;
+  background-color: #d4d4d4;
+  color: #111827;
   flex: 1;
-  min-width: 30em;
-  max-width: 30em;
+
+  flex-wrap: wrap;
   font-family: "Source Serif Pro", serif !important;
 }
 .sideboard-wrapper h1 {
@@ -118,16 +122,39 @@ h2 {
   display: flex;
   flex-direction: column;
   width: 90%;
+  padding-bottom: 3em;
 }
 .move-wrapper {
-  background-color: orange;
+  color: black;
+  background-color: #e2e8f0;
   width: 100%;
+  display: flex;
+  align-items: center;
   font-size: 1.5em;
 }
 .move-wrapper:nth-child(odd) {
-  background-color: beige;
+  background-color: #94a3b8;
+  color: white;
 }
 .h-stack {
   display: flex;
   gap: 1em;
+}
+.v-stack {
+  gap: 1em;
+}
+.game-wrapper {
+  display: flex;
+  background-color: red;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.move-wrapper h1 {
+  font-size: 1em;
+  font-weight: 100;
+  margin: 0;
+}
+.move-wrapper h5 {
+  margin-left: auto;
+  margin-right: 1em;
 }

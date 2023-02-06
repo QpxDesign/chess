@@ -27,6 +27,7 @@ export default function WelcomeScreen() {
           `{"Username":"${username}","Color":"white"}`
         );
         setLink(window.location + "gamecode/" + r2.gID);
+        setCode(r2.gID);
       })
 
       .catch((e) => console.error(e));

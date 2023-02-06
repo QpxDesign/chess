@@ -8,13 +8,14 @@ import {
   Route,
   useParams,
 } from "react-router-dom";
+import Game from "./pages/Game";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/gamecode/:gc" element={<Board />} />
+        <Route path="/gamecode/:gc" element={<Game />} />
       </Routes>
     </Router>
   );
