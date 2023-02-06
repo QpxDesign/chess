@@ -11,6 +11,10 @@ p {
   margin: 0;
 }
 input {
+  background-color: #f1f5f9;
+  padding: .3em 1em;
+
+  border: none;
   font-family: "Source Serif Pro";
   font-size: 1.2em;
 }
@@ -65,7 +69,7 @@ input {
 }
 .welcomescreen-wrapper {
   width: 50em;
-  height: 30em;
+  height: fit-content;
   position: absolute;
   left: 0;
   right: 0;
@@ -80,6 +84,9 @@ input {
   align-items: center;
   color: white;
   padding: 1.2em;
+  max-width: 92%;
+  border-radius: 1em;
+  gap: .2em;
   font-family: "Source Serif Pro", serif;
   font-weight: 800;
 }
@@ -138,6 +145,7 @@ h2 {
 }
 .h-stack {
   display: flex;
+  justify-content: space-around;
   gap: 1em;
 }
 .v-stack {
@@ -157,4 +165,35 @@ h2 {
 .move-wrapper h5 {
   margin-left: auto;
   margin-right: 1em;
+}
+.cool-purple-button {
+  padding: 0.25em 1em;
+  font-size: 1em;
+  flex: 1;
+  font-weight: 900;
+  background-color: #6d28d9;
+  margin-left: auto;
+  border-radius: 0.33em;
+  color: white;
+  border: none;
+  box-shadow: -3px 3px 30px 10px rgba(109, 40, 217, 0.5);
+  font-family: "Source Serif Pro", serif !important;
+}
+.cool-purple-button:hover {
+  transform: scale(0.9);
+}
+.form-wrapper {
+  display: flex;
+  gap: .33em;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.username-input {
+  width: 12em;
+  margin: 0 auto;
+  flex: none;
+}
+input {
+  flex: 1;
+
 }

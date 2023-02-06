@@ -8,7 +8,7 @@ export function FormatTime(s: any) {
   var timeFormat: any = date.toLocaleTimeString();
   timeFormat = timeFormat.split(":");
   console.log(timeFormat);
-  return timeFormat[0] + ":" + timeFormat[2];
+  return timeFormat[0] + ":" + timeFormat[1];
 }
 
 export default function Sideboard() {

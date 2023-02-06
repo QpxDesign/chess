@@ -6,7 +6,7 @@ export default function WelcomeScreen() {
   const [code, setCode]: any = useState("");
 
   async function handleGenerateLink() {
-    if (username.length < 3) return;
+    if (username.length < 3 || code !== "") return;
     let data = {
       Username: username,
       Color: "white",
@@ -34,7 +34,8 @@ export default function WelcomeScreen() {
   }
 
   async function handleGameJoin() {
-    let data = {
+    if (code.length !== 8 || code !== "") return
+    let data = { 
       Username: username,
       GameCode: code,
       Color: "black",
@@ -67,30 +68,32 @@ export default function WelcomeScreen() {
       <div className="welcomescreen-wrapper">
         {" "}
         <h1>Welcome to qChess</h1>
-        <input
-          value={username}
-          placeholder="username"
-          onChange={(e) => setUsername(e.target.value)}
-        ></input>
-        <div className="v-stack"></div>
-        <div className="h-stack">
-          <input value={link} placeholder="link"></input>
-          <button onClick={() => handleGenerateLink()}>
-            Generate link (Use this to join)
-          </button>
-        </div>
-        <div className="h-stack">
+        <div className="form-wrapper">
           <input
-            placeholder="code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <button onClick={() => handleGameJoin()}>
-            Join Game (Send this to who you want to join)
-          </button>
-        </div>
-        <div className="modes-wrapper"></div>
-      </div>
+            value={username}
+            placeholder="username"
+            className="username-input"
+            onChange={(e) => setUsername(e.target.value)}
+          ></input>
+          <div className="v-stack"></div>
+          <div className="h-stack">
+            <input value={link} placeholder="link"></input>
+            <button onClick={() => handleGenerateLink()} className="cool-purple-button">
+              Generate link (Use this to join)
+            </button>
+          </div>
+          <div className="h-stack">
+            <input
+              placeholder="code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+            <button onClick={() => handleGameJoin()} className="cool-purple-button">
+              Join Game (Send this to who you want to join)
+            </button>
+          </div>
+          <div className="modes-wrapper"></div>
+        </div></div>
     </>
   );
 }
