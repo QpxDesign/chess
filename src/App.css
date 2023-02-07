@@ -22,9 +22,11 @@ input {
   display: flex;
   max-width: 100vw;
   max-height: 100vh;
+  overflow-x: scroll;
   height: 100vh;
   aspect-ratio: 1/1;
   flex-direction: column;
+  margin: 0 auto;
 }
 .row {
   display: flex;
@@ -35,6 +37,8 @@ input {
   justify-content: center;
   align-items: center;
   display: flex;
+  min-width: 5em !important;
+  min-height: 3em !important;
 }
 .square img {
   width: 4em;
@@ -118,8 +122,9 @@ h2 {
   background-color: #d4d4d4;
   color: #111827;
   flex: 1;
-
-  flex-wrap: wrap;
+  min-width: 20em;
+  max-height: 100vh;
+  overflow-y: scroll;
   font-family: "Source Serif Pro", serif !important;
 }
 .sideboard-wrapper h1 {
@@ -155,7 +160,7 @@ h2 {
 }
 .game-wrapper {
   display: flex;
-  background-color: red;
+  background-color: #fdba74;
   flex-wrap: wrap;
   width: 100%;
 }
