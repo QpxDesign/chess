@@ -14,13 +14,13 @@ export default function Sideboard() {
   const { gc } = useParams();
   const [movesLedger, setMovesLedger]: any = useState([]);
 
-  async function getMouseEventOptions() {
+  async function getMoves() {
     if (gc?.length !== 8) return;
     let data = {
       GameCode: gc,
     };
 
-    await fetch("http://localhost:3001/get-moves-from-code", {
+    await fetch("https://chess-api.quinnpatwardhan.com/get-moves-from-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +40,14 @@ export default function Sideboard() {
       });
   }
   useEffect(() => {
-    getMouseEventOptions();
+    const interval = setInterval(() => {
+      getMoves();
+    }, 5_000);
+
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    getMoves();
   }, []);
   return (
     <div className="sideboard-wrapper">

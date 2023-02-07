@@ -51,7 +51,7 @@ export default function Board(props: BoardProps) {
       };
 
       console.log(JSON.stringify(data));
-      fetch("http://localhost:3001/handle-move", {
+      fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,9 +69,7 @@ export default function Board(props: BoardProps) {
         });
     }
   }
-  function timeout(delay: number) {
-    return new Promise((res) => setTimeout(res, delay));
-  }
+
   // create gameboard and gameboardColors
   useEffect(() => {
     const gb = new Array(8);
@@ -96,14 +94,17 @@ export default function Board(props: BoardProps) {
       GameCode: gc,
     };
 
-    await fetch("http://localhost:3001/get-gameboard-from-code", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Access-Control-Allow-Origin": "*",
-      },
-      body: JSON.stringify(data),
-    })
+    await fetch(
+      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(data),
+      }
+    )
       .then((r) => r.json())
       .then((r2) => {
         if (!r2.error) {
@@ -118,7 +119,7 @@ export default function Board(props: BoardProps) {
   useEffect(() => {
     const interval = setInterval(() => {
       getGameboardFromCode();
-    }, 3_000);
+    }, 1_000);
 
     return () => clearInterval(interval);
   }, []);
@@ -209,7 +210,7 @@ export default function Board(props: BoardProps) {
         currentX,
         gc
       );
-      await timeout(1000);
+
       if (
         handlePieceElimination(
           currentY,
