@@ -7,7 +7,10 @@ export async function handleMove(
   nx: any,
   gc: any
 ) {
+  console.log(oy, ox, ny, nx, gc);
   if (gb[0].length !== 0) {
+    pieceOBJ.row = ny;
+    pieceOBJ.col = nx;
     let mo = {
       pieceOBJ: pieceOBJ,
       oldY: oy,
@@ -22,13 +25,16 @@ export async function handleMove(
       moveData: JSON.stringify(mo),
     };
 
-    await fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
+    await fetch("http://localhost:3001/handle-move", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify(data),
-    }).catch((e) => console.log(e));
+    })
+      .then((r) => r.json())
+      .then((r2) => console.log(r2))
+      .catch((e) => console.error(e));
   }
 }

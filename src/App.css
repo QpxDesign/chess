@@ -12,7 +12,7 @@ p {
 }
 input {
   background-color: #f1f5f9;
-  padding: .3em 1em;
+  padding: 0.1em 0.25em;
 
   border: none;
   font-family: "Source Serif Pro";
@@ -86,7 +86,7 @@ input {
   padding: 1.2em;
   max-width: 92%;
   border-radius: 1em;
-  gap: .2em;
+  gap: 0.2em;
   font-family: "Source Serif Pro", serif;
   font-weight: 800;
 }
@@ -146,7 +146,9 @@ h2 {
 .h-stack {
   display: flex;
   justify-content: space-around;
+  align-items: center;
   gap: 1em;
+  max-width: 30em;
 }
 .v-stack {
   gap: 1em;
@@ -178,13 +180,15 @@ h2 {
   border: none;
   box-shadow: -3px 3px 30px 10px rgba(109, 40, 217, 0.5);
   font-family: "Source Serif Pro", serif !important;
+  transition: 0.25s;
+  cursor: pointer;
 }
 .cool-purple-button:hover {
-  transform: scale(0.9);
+  transform: scale(0.95);
 }
 .form-wrapper {
   display: flex;
-  gap: .33em;
+  gap: 0.33em;
   flex-direction: column;
   justify-content: flex-end;
 }
@@ -195,5 +199,5 @@ h2 {
 }
 input {
   flex: 1;
-
+  min-height: 2em;
 }

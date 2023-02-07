@@ -12,7 +12,7 @@ export default function WelcomeScreen() {
       Color: "white",
     };
     localStorage.setItem("user", JSON.stringify(data));
-    await fetch("https://chess-api.quinnpatwardhan.com/generate-link", {
+    await fetch("http://localhost:3001/generate-link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -28,20 +28,18 @@ export default function WelcomeScreen() {
         );
         setLink(window.location + "gamecode/" + r2.gID);
         setCode(r2.gID);
-      })
-
-      .catch((e) => console.error(e));
+      });
   }
 
   async function handleGameJoin() {
-    if (code.length !== 8 || code !== "") return
-    let data = { 
+    if (code.length !== 8 || code === "") return;
+    let data = {
       Username: username,
       GameCode: code,
       Color: "black",
     };
     localStorage.setItem("user", JSON.stringify(data));
-    await fetch("https://chess-api.quinnpatwardhan.com/handle-game-join", {
+    await fetch("http://localhost:3001/handle-game-join", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -59,8 +57,7 @@ export default function WelcomeScreen() {
           );
           window.location.pathname = "/gamecode/" + code;
         }
-      })
-      .catch((e) => console.error(e));
+      });
   }
   return (
     <>
@@ -78,22 +75,29 @@ export default function WelcomeScreen() {
           <div className="v-stack"></div>
           <div className="h-stack">
             <input value={link} placeholder="link"></input>
-            <button onClick={() => handleGenerateLink()} className="cool-purple-button">
+            <button
+              onClick={() => handleGenerateLink()}
+              className="cool-purple-button"
+            >
               Generate link (Use this to join)
             </button>
           </div>
-          <div className="h-stack">
+          <div className="h-stack" style={{ marginTop: "1em" }}>
             <input
               placeholder="code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
             />
-            <button onClick={() => handleGameJoin()} className="cool-purple-button">
+            <button
+              onClick={() => handleGameJoin()}
+              className="cool-purple-button"
+            >
               Join Game (Send this to who you want to join)
             </button>
           </div>
           <div className="modes-wrapper"></div>
-        </div></div>
+        </div>
+      </div>
     </>
   );
 }

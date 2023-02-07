@@ -6,9 +6,8 @@ export function FormatTime(s: any) {
   s = parseInt(s);
   const date = new Date(s);
   var timeFormat: any = date.toLocaleTimeString();
-  timeFormat = timeFormat.split(":");
-  console.log(timeFormat);
-  return timeFormat[0] + ":" + timeFormat[1];
+
+  return timeFormat;
 }
 
 export default function Sideboard() {
@@ -21,7 +20,7 @@ export default function Sideboard() {
       GameCode: gc,
     };
 
-    await fetch("https://chess-api.quinnpatwardhan.com/get-moves-from-code", {
+    await fetch("http://localhost:3001/get-moves-from-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,8 +37,7 @@ export default function Sideboard() {
           window.location.pathname = "/";
           localStorage.clear();
         }
-      })
-      .catch((error) => console.error(error));
+      });
   }
   useEffect(() => {
     getMouseEventOptions();

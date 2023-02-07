@@ -5,7 +5,7 @@ import Board from "../components/Board";
 export default function Game() {
   return (
     <div className="game-wrapper">
-      <Board />
+      <Board mode={""} />
       <Sideboard />
     </div>
   );

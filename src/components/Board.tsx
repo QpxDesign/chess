@@ -11,7 +11,11 @@ import { useParams } from "react-router-dom";
 import { handleMove } from "../functions/handleMove";
 import { handlePieceElimination } from "../functions/handlePieceElimination";
 
-export default function Board() {
+interface BoardProps {
+  mode: string;
+}
+
+export default function Board(props: BoardProps) {
   const size = [1, 2, 3, 4, 5, 6, 7, 8];
   const [gameboard, setGameboard]: any = useState([[], []]);
   const [movesLedger, setMovesLedger]: any = useState([]);
@@ -44,7 +48,7 @@ export default function Board() {
       GameCode: gc,
     };
 
-    await fetch("https://chess-api.quinnpatwardhan.com/get-gameboard-from-code", {
+    await fetch("http://localhost:3001/get-gameboard-from-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,18 +61,18 @@ export default function Board() {
         if (!r2.error) {
           setGameboard(r2.gameboard);
           setMovesLedger(r2.movesLedger);
+          console.log(r2);
         } else {
           console.log(r2);
           window.location.pathname = "/";
           localStorage.clear();
         }
-      })
-      .catch((error) => console.error(error));
+      });
   }
   useEffect(() => {
     const interval = setInterval(() => {
       getGameboardFromCode();
-    }, 10_000);
+    }, 3_000);
 
     return () => clearInterval(interval);
   }, []);
@@ -130,7 +134,7 @@ export default function Board() {
     const l = JSON.parse(localStorage.getItem("user") ?? "{}");
     if (l === undefined || l.Color === undefined) return false;
 
-    if (movesLedger === undefined || movesLedger.length === 0) {
+    if (movesLedger === null || movesLedger.length === 0) {
       return true;
     }
     if (l.Color === movesLedger[movesLedger.length - 1].pieceOBJ.color) {
@@ -149,20 +153,16 @@ export default function Board() {
       gameboard[currentY][currentX] !== null &&
       activePiece.color !== gameboard[currentY][currentX].color
     ) {
-      if (
-        handlePieceElimination(
-          currentY,
-          currentX,
-          activePiece,
-          gameboard,
-          gc
-        ) !== undefined
-      ) {
-        setGameboard(
-          handlePieceElimination(currentY, currentX, activePiece, gameboard, gc)
-        );
-        setActivePiece({});
-      }
+      handleMove(
+        gameboard,
+        activePiece,
+        activePiece.row,
+        activePiece.col,
+        currentY,
+        currentX,
+        gc
+      );
+      setActivePiece({});
 
       return;
     }
@@ -203,12 +203,8 @@ export default function Board() {
             currentX
           )
         ) {
-          const newData = [...gameboard];
-          newData[currentY][currentX] = activePiece;
-          newData[activePiece.row][activePiece.col] = null;
-          setGameboard(newData);
           handleMove(
-            newData,
+            gameboard,
             activePiece,
             activePiece.row,
             activePiece.col,
@@ -231,12 +227,8 @@ export default function Board() {
             currentX
           )
         ) {
-          const newData = [...gameboard];
-          newData[currentY][currentX] = activePiece;
-          newData[activePiece.row][activePiece.col] = null;
-          setGameboard(newData);
           handleMove(
-            newData,
+            gameboard,
             activePiece,
             activePiece.row,
             activePiece.col,
@@ -258,12 +250,8 @@ export default function Board() {
             currentX
           )
         ) {
-          const newData = [...gameboard];
-          newData[currentY][currentX] = activePiece;
-          newData[activePiece.row][activePiece.col] = null;
-          setGameboard(newData);
           handleMove(
-            newData,
+            gameboard,
             activePiece,
             activePiece.row,
             activePiece.col,
@@ -285,12 +273,8 @@ export default function Board() {
             currentX
           )
         ) {
-          const newData = [...gameboard];
-          newData[currentY][currentX] = activePiece;
-          newData[activePiece.row][activePiece.col] = null;
-          setGameboard(newData);
           handleMove(
-            newData,
+            gameboard,
             activePiece,
             activePiece.row,
             activePiece.col,
@@ -313,12 +297,8 @@ export default function Board() {
             currentX
           )
         ) {
-          const newData = [...gameboard];
-          newData[currentY][currentX] = activePiece;
-          newData[activePiece.row][activePiece.col] = null;
-          setGameboard(newData);
           handleMove(
-            newData,
+            gameboard,
             activePiece,
             activePiece.row,
             activePiece.col,
@@ -340,12 +320,8 @@ export default function Board() {
             currentX
           )
         ) {
-          const newData = [...gameboard];
-          newData[currentY][currentX] = activePiece;
-          newData[activePiece.row][activePiece.col] = null;
-          setGameboard(newData);
           handleMove(
-            newData,
+            gameboard,
             activePiece,
             activePiece.row,
             activePiece.col,
@@ -387,47 +363,91 @@ export default function Board() {
 
     return class_name;
   }
-
-  return (
-    <>
-      <div className="chess-board">
-        {gameboard.map((item1: any, yIndex: any) => {
-          return (
-            <div className="row" key={item1.length * yIndex + uuid()}>
-              {item1.map((item2: any, xIndex: any) => {
-                return (
-                  <div
-                    key={String(item2?.id) + uuid()}
-                    onClick={() => handleSquareClick(yIndex, xIndex)}
-                    className={determineClassName(yIndex, xIndex)}
-                  >
-                    {item2 !== undefined &&
-                    item2 !== null &&
-                    item2.icon !== undefined ? (
-                      <img
-                        src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
-                        className={
-                          item2.color +
-                          " " +
-                          (inHand === item2.id ? "inplay" : "")
-                        }
-                        alt={item2.icon}
-                        onDrag={() => setInHand(item2.id)}
-                        onMouseEnter={() =>
-                          handleMouseOver(item2, yIndex, xIndex)
-                        }
-                        onMouseLeave={() => handleMouseLeave()}
-                      />
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
+  if (props.mode === "display") {
+    return (
+      <>
+        <div className="chess-board">
+          {size.map((item1: any, yIndex: any) => {
+            return (
+              <div className="row" key={item1.length * yIndex + uuid()}>
+                {size.map((item2: any, xIndex: any) => {
+                  return (
+                    <div
+                      key={String(item2?.id) + uuid()}
+                      onClick={() => handleSquareClick(yIndex, xIndex)}
+                      className={determineClassName(yIndex, xIndex)}
+                    >
+                      {item2 !== undefined &&
+                      item2 !== null &&
+                      item2.icon !== undefined ? (
+                        <img
+                          src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
+                          className={
+                            item2.color +
+                            " " +
+                            (inHand === item2.id ? "inplay" : "")
+                          }
+                          alt={item2.icon}
+                          onDrag={() => setInHand(item2.id)}
+                          onMouseEnter={() =>
+                            handleMouseOver(item2, yIndex, xIndex)
+                          }
+                          onMouseLeave={() => handleMouseLeave()}
+                        />
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className="chess-board">
+          {gameboard.map((item1: any, yIndex: any) => {
+            return (
+              <div className="row" key={item1.length * yIndex + uuid()}>
+                {item1.map((item2: any, xIndex: any) => {
+                  return (
+                    <div
+                      key={String(item2?.id) + uuid()}
+                      onClick={() => handleSquareClick(yIndex, xIndex)}
+                      className={determineClassName(yIndex, xIndex)}
+                    >
+                      {item2 !== undefined &&
+                      item2 !== null &&
+                      item2.icon !== undefined ? (
+                        <img
+                          src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
+                          className={
+                            item2.color +
+                            " " +
+                            (inHand === item2.id ? "inplay" : "")
+                          }
+                          alt={item2.icon}
+                          onDrag={() => setInHand(item2.id)}
+                          onMouseEnter={() =>
+                            handleMouseOver(item2, yIndex, xIndex)
+                          }
+                          onMouseLeave={() => handleMouseLeave()}
+                        />
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
 }
