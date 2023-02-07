@@ -4,7 +4,6 @@ import { canBishopMove } from "./Bishop";
 import { canRookMove } from "./Rook";
 import { canKnightMove } from "./Knight";
 import { canKingMove } from "./King";
-import { handleMove } from "./handleMove";
 
 export function handlePieceElimination(
   currentY: any,
@@ -13,6 +12,47 @@ export function handlePieceElimination(
   gameboard: any,
   gc: any
 ) {
+  async function handleMove(
+    gb: any,
+    pieceOBJ: any,
+    oy: any,
+    ox: any,
+    ny: any,
+    nx: any,
+    gc: any
+  ) {
+    console.log(gb);
+    if (gb[0].length !== 0) {
+      pieceOBJ.row = ny;
+      pieceOBJ.col = nx;
+      let mo = {
+        pieceOBJ: pieceOBJ,
+        oldY: oy,
+        oldX: ox,
+        newY: ny,
+        newX: nx,
+        timestamp: Date.now(),
+      };
+      let data = {
+        GameCode: gc,
+        gameboard: JSON.stringify(gb),
+        moveData: JSON.stringify(mo),
+      };
+
+      await fetch("http://localhost:3001/handle-move", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((r) => r.json())
+        .then((r2) => console.log(r2))
+        .catch((e) => console.error(e));
+    }
+  }
+
   if (activePiece.icon === undefined) return;
   if (activePiece.icon === "Pawn") {
     if (
@@ -39,7 +79,6 @@ export function handlePieceElimination(
         gc
       );
 
-      window.location.reload();
       return newData;
     }
   }
@@ -67,7 +106,6 @@ export function handlePieceElimination(
         gc
       );
 
-      window.location.reload();
       return newData;
     }
   }
@@ -95,7 +133,6 @@ export function handlePieceElimination(
         gc
       );
 
-      window.location.reload();
       return newData;
     }
   }
@@ -122,7 +159,6 @@ export function handlePieceElimination(
         gc
       );
 
-      window.location.reload();
       return newData;
     }
   }
@@ -149,7 +185,6 @@ export function handlePieceElimination(
         gc
       );
 
-      window.location.reload();
       return newData;
     }
   }
@@ -176,9 +211,9 @@ export function handlePieceElimination(
         gc
       );
 
-      window.location.reload();
       return newData;
     }
   }
+  window.location.reload();
   return undefined;
 }

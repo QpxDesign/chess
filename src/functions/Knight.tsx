@@ -172,4 +172,5 @@ export function canKnightMove(
       if (yIndex - 1 === newY && xIndex - 2 === newX) return true;
     }
   } catch (e) {}
+  return false;
 }

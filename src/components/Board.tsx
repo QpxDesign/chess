@@ -8,7 +8,6 @@ import { canRookMove, ColorRook } from "../functions/Rook";
 import { canKingMove, ColorKing } from "../functions/King";
 import uuid from "react-uuid";
 import { useParams } from "react-router-dom";
-import { handleMove } from "../functions/handleMove";
 import { handlePieceElimination } from "../functions/handlePieceElimination";
 
 interface BoardProps {
@@ -21,9 +20,58 @@ export default function Board(props: BoardProps) {
   const [movesLedger, setMovesLedger]: any = useState([]);
   const [gameboardColors, setGameboardColors]: any = useState([[], []]);
   const [activePiece, setActivePiece]: any = useState({});
-  const [inHand, setInHand]: any = useState("");
+  const [moveValidated, setMoveValidated]: any = useState(true);
   const { gc } = useParams();
 
+  function handleMove(
+    gb: any,
+    pieceOBJ: any,
+    oy: any,
+    ox: any,
+    ny: any,
+    nx: any,
+    gc: any
+  ) {
+    setMoveValidated(false);
+    if (gb[0].length !== 0) {
+      pieceOBJ.row = ny;
+      pieceOBJ.col = nx;
+      let mo = {
+        pieceOBJ: pieceOBJ,
+        oldY: oy,
+        oldX: ox,
+        newY: ny,
+        newX: nx,
+        timestamp: Date.now(),
+      };
+      let data = {
+        GameCode: gc,
+        gameboard: JSON.stringify(gb),
+        moveData: JSON.stringify(mo),
+      };
+
+      console.log(JSON.stringify(data));
+      fetch("http://localhost:3001/handle-move", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setMoveValidated(true);
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  }
+  function timeout(delay: number) {
+    return new Promise((res) => setTimeout(res, delay));
+  }
   // create gameboard and gameboardColors
   useEffect(() => {
     const gb = new Array(8);
@@ -48,25 +96,20 @@ export default function Board(props: BoardProps) {
       GameCode: gc,
     };
 
-    await fetch(
-      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(data),
-      }
-    )
+    await fetch("http://localhost:3001/get-gameboard-from-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(data),
+    })
       .then((r) => r.json())
       .then((r2) => {
         if (!r2.error) {
           setGameboard(r2.gameboard);
           setMovesLedger(r2.movesLedger);
-          console.log(r2);
         } else {
-          console.log(r2);
           window.location.pathname = "/";
           localStorage.clear();
         }
@@ -147,14 +190,15 @@ export default function Board(props: BoardProps) {
     }
     return false;
   }
-  function handleSquareClick(currentY: any, currentX: any) {
+  async function handleSquareClick(currentY: any, currentX: any) {
     var pieceObj = gameboard[currentY][currentX];
     const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
-    console.log("a");
+
     if (
       activePiece.id !== undefined &&
       gameboard[currentY][currentX] !== null &&
-      activePiece.color !== gameboard[currentY][currentX].color
+      activePiece.color !== gameboard[currentY][currentX].color &&
+      moveValidated
     ) {
       handleMove(
         gameboard,
@@ -165,7 +209,21 @@ export default function Board(props: BoardProps) {
         currentX,
         gc
       );
-      setActivePiece({});
+      await timeout(1000);
+      if (
+        handlePieceElimination(
+          currentY,
+          currentX,
+          activePiece,
+          gameboard,
+          gc
+        ) !== undefined
+      ) {
+        setGameboard(
+          handlePieceElimination(currentY, currentX, activePiece, gameboard, gc)
+        );
+        setActivePiece({});
+      }
 
       return;
     }
@@ -182,7 +240,8 @@ export default function Board(props: BoardProps) {
         if (
           pieceObj !== null &&
           pieceObj.color !== undefined &&
-          pieceObj.color === l
+          pieceObj.color === l &&
+          moveValidated
         ) {
           setActivePiece(pieceObj);
           handlePieceTooltip(pieceObj, currentY, currentX);
@@ -192,7 +251,7 @@ export default function Board(props: BoardProps) {
         setActivePiece({});
         handlePreviewReset();
       }
-    } else if (activePiece.id !== undefined && isMyMove()) {
+    } else if (activePiece.id !== undefined && isMyMove() && moveValidated) {
       // handle piece move
 
       if (activePiece.icon === "Pawn") {
@@ -206,6 +265,7 @@ export default function Board(props: BoardProps) {
             currentX
           )
         ) {
+          setMoveValidated(false);
           handleMove(
             gameboard,
             activePiece,
@@ -215,9 +275,9 @@ export default function Board(props: BoardProps) {
             currentX,
             gc
           );
+          window.location.reload();
 
           setActivePiece({});
-          window.location.reload();
         }
       }
       if (activePiece.icon === "Queen") {
@@ -230,6 +290,7 @@ export default function Board(props: BoardProps) {
             currentX
           )
         ) {
+          setMoveValidated(false);
           handleMove(
             gameboard,
             activePiece,
@@ -239,8 +300,8 @@ export default function Board(props: BoardProps) {
             currentX,
             gc
           );
-          setActivePiece({});
           window.location.reload();
+          setActivePiece({});
         }
       }
       if (activePiece.icon === "Bishop") {
@@ -253,6 +314,7 @@ export default function Board(props: BoardProps) {
             currentX
           )
         ) {
+          setMoveValidated(false);
           handleMove(
             gameboard,
             activePiece,
@@ -262,8 +324,8 @@ export default function Board(props: BoardProps) {
             currentX,
             gc
           );
-          setActivePiece({});
           window.location.reload();
+          setActivePiece({});
         }
       }
       if (activePiece.icon === "Rook") {
@@ -276,6 +338,7 @@ export default function Board(props: BoardProps) {
             currentX
           )
         ) {
+          setMoveValidated(false);
           handleMove(
             gameboard,
             activePiece,
@@ -285,9 +348,8 @@ export default function Board(props: BoardProps) {
             currentX,
             gc
           );
-
-          setActivePiece({});
           window.location.reload();
+          setActivePiece({});
         }
       }
       if (activePiece.icon === "Knight") {
@@ -300,6 +362,7 @@ export default function Board(props: BoardProps) {
             currentX
           )
         ) {
+          setMoveValidated(false);
           handleMove(
             gameboard,
             activePiece,
@@ -309,8 +372,8 @@ export default function Board(props: BoardProps) {
             currentX,
             gc
           );
-          setActivePiece({});
           window.location.reload();
+          setActivePiece({});
         }
       }
       if (activePiece.icon === "King") {
@@ -323,6 +386,7 @@ export default function Board(props: BoardProps) {
             currentX
           )
         ) {
+          setMoveValidated(false);
           handleMove(
             gameboard,
             activePiece,
@@ -332,11 +396,12 @@ export default function Board(props: BoardProps) {
             currentX,
             gc
           );
-          setActivePiece({});
           window.location.reload();
+          setActivePiece({});
         }
       }
-      setGameboard(gameboard);
+
+      window.location.reload();
     }
   }
   function handleMouseLeave() {
@@ -385,13 +450,8 @@ export default function Board(props: BoardProps) {
                       item2.icon !== undefined ? (
                         <img
                           src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
-                          className={
-                            item2.color +
-                            " " +
-                            (inHand === item2.id ? "inplay" : "")
-                          }
+                          className={item2.color}
                           alt={item2.icon}
-                          onDrag={() => setInHand(item2.id)}
                           onMouseEnter={() =>
                             handleMouseOver(item2, yIndex, xIndex)
                           }
@@ -428,13 +488,8 @@ export default function Board(props: BoardProps) {
                       item2.icon !== undefined ? (
                         <img
                           src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
-                          className={
-                            item2.color +
-                            " " +
-                            (inHand === item2.id ? "inplay" : "")
-                          }
+                          className={item2.color}
                           alt={item2.icon}
-                          onDrag={() => setInHand(item2.id)}
                           onMouseEnter={() =>
                             handleMouseOver(item2, yIndex, xIndex)
                           }
