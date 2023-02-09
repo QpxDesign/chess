@@ -9,6 +9,9 @@ import { canKingMove, ColorKing } from "../functions/King";
 import uuid from "react-uuid";
 import { useParams } from "react-router-dom";
 import { handlePieceElimination } from "../functions/handlePieceElimination";
+import socketIO from "socket.io-client";
+import * as io from "socket.io-client";
+var socket = io.connect("http://localhost:3005");
 
 interface BoardProps {
   mode: string;
@@ -69,6 +72,18 @@ export default function Board(props: BoardProps) {
         });
     }
   }
+  useEffect(() => {
+    socket.on("getgameboard", (data) => {
+      if (data[0].movesLedger !== undefined) {
+        setMovesLedger(JSON.parse(data[0].movesLedger));
+      }
+    });
+  }, []);
+  socket.on("getgameboard", (data) => {
+    if (data[0].movesLedger !== undefined) {
+      setMovesLedger(JSON.parse(data[0].movesLedger));
+    }
+  });
 
   // create gameboard and gameboardColors
   useEffect(() => {
@@ -84,45 +99,16 @@ export default function Board(props: BoardProps) {
       }
     }
     setGameboardColors(...bcg);
-
-    getGameboardFromCode();
   }, []);
-
-  async function getGameboardFromCode() {
-    if (gc?.length !== 8) return;
-    let data = {
-      GameCode: gc,
-    };
-
-    await fetch(
-      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(data),
+  socket.emit("gamecode", gc);
+  async function getGameboard() {
+    socket.on("getgameboard", async function (data) {
+      if (data[0].gameboard !== undefined) {
+        setGameboard(JSON.parse(data[0].gameboard));
       }
-    )
-      .then((r) => r.json())
-      .then((r2) => {
-        if (!r2.error) {
-          setGameboard(r2.gameboard);
-          setMovesLedger(r2.movesLedger);
-        } else {
-          window.location.pathname = "/";
-          localStorage.clear();
-        }
-      });
+    });
   }
-  useEffect(() => {
-    const interval = setInterval(() => {
-      getGameboardFromCode();
-    }, 1_000);
 
-    return () => clearInterval(interval);
-  }, []);
   function handlePreviewReset() {
     const gbc = new Array(8);
     for (var i = 0; i < gbc.length; i++) {
@@ -135,6 +121,11 @@ export default function Board(props: BoardProps) {
     }
     setGameboardColors(...gbc);
   }
+
+  useEffect(() => {
+    getGameboard();
+  }, []);
+
   function handlePieceTooltip(pieceObj: any, yIndex: any, xIndex: any) {
     const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
 
