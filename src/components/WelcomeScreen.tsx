@@ -50,7 +50,6 @@ export default function WelcomeScreen() {
     })
       .then((r) => r.json())
       .then((r2) => {
-        console.log(r2);
         if (r2.allowJoin) {
           localStorage.setItem(
             "user",

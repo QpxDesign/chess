@@ -10,8 +10,6 @@ export default function Nqueens() {
     var b = JSON.parse(JSON.stringify(b2));
     if (row == b.length) {
       setBoard(b);
-
-      // console.log(b2);
     }
 
     if (row < b.length) {
@@ -97,7 +95,6 @@ export default function Nqueens() {
     return true;
   }
   function displayQueens() {
-    console.log(gameboardColors);
     if (
       Number(boardSize) > 10 ||
       boardSize === undefined ||
@@ -164,7 +161,6 @@ export default function Nqueens() {
         bcg[bh1][bh2] = "";
       }
     }
-    console.log(bcg);
     setGameboardColors(bcg);
   }
   useEffect(() => {

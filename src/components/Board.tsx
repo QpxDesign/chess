@@ -61,11 +61,8 @@ export default function Board(props: BoardProps) {
         .then((response) => response.json())
         .then((data) => {
           setMoveValidated(true);
-          console.log("Success:", data);
         })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+        .catch((error) => {});
     }
   }
   async function getGameboardFromCode() {

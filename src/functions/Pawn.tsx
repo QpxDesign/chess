@@ -22,7 +22,7 @@ export function ColorPawn(bcg: any, yIndex: any, xIndex: any, facing: any) {
     } catch (e) {}
   }
   if (facing === "up") {
-    bcg[yIndex - 1][xIndex] = "green";
+    if (bcg[yIndex - 1][xIndex] === null) bcg[yIndex - 1][xIndex] = "green";
     // left diag
     try {
       if (
@@ -79,9 +79,16 @@ export function canPawnMove(
     } catch (e) {}
   }
   if (facing === "up") {
-    if (yIndex - 1 === newY && xIndex === newX) {
-      return true;
-    }
+    try {
+      if (yIndex - 1 === newY && xIndex === newX) {
+        if (bcg[yIndex - 1][xIndex] !== null) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+    } catch (e) {}
+
     // left diag
     try {
       if (
