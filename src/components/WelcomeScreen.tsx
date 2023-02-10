@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function WelcomeScreen() {
   const [link, setLink]: any = useState("");
@@ -97,6 +98,7 @@ export default function WelcomeScreen() {
           </div>
           <div className="modes-wrapper"></div>
         </div>
+        <Link to="nqueens">nQueens Visualizer</Link>
       </div>
     </>
   );

@@ -206,3 +206,26 @@ input {
   flex: 1;
   min-height: 2em;
 }
+@media screen and (max-width: 600px) {
+  .welcomescreen-background {
+    background-color: black;
+    display: flex;
+  }
+  .welcomescreen-wrapper {
+    align-items: center;
+    justify-content: center;
+    margin-top: 2em;
+  }
+  .welcomescreen-wrapper h1 {
+    margin-bottom: 0.25em;
+  }
+}
+
+.welcomescreen-wrapper a {
+  color: white;
+  font-weight: 100;
+  font-size: 1.25em;
+}
+.welcomescreen-wrapper a:hover {
+  font-style: italic !important;
+}

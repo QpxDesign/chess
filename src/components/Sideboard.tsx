@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import socketIO from "socket.io-client";
-import * as io from "socket.io-client";
-var socket = io.connect("http://localhost:3005");
 
 export function FormatTime(s: any) {
   if (s === null || s === undefined) return;
@@ -16,21 +13,41 @@ export function FormatTime(s: any) {
 export default function Sideboard() {
   const { gc } = useParams();
   const [movesLedger, setMovesLedger]: any = useState([]);
-  socket.emit("gamecode", gc);
+  async function getMoves() {
+    if (gc?.length !== 8) return;
+    let data = {
+      GameCode: gc,
+    };
 
+    await fetch("https://chess-api.quinnpatwardhan.com/get-moves-from-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((r) => r.json())
+      .then((r2) => {
+        if (!r2.error) {
+          setMovesLedger(r2.reverse());
+        } else {
+          console.log(r2);
+          window.location.pathname = "/";
+          localStorage.clear();
+        }
+      });
+  }
   useEffect(() => {
-    socket.on("getgameboard", (data) => {
-      if (data[0].movesLedger !== undefined) {
-        setMovesLedger(JSON.parse(data[0].movesLedger));
-      }
-    });
-  }, []);
-  socket.on("getgameboard", (data) => {
-    if (data[0].movesLedger !== undefined) {
-      setMovesLedger(JSON.parse(data[0].movesLedger));
-    }
-  });
+    const interval = setInterval(() => {
+      getMoves();
+    }, 5_000);
 
+    return () => clearInterval(interval);
+  }, []);
+  useEffect(() => {
+    getMoves();
+  }, []);
   return (
     <div className="sideboard-wrapper">
       {" "}

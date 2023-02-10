@@ -9,9 +9,6 @@ import { canKingMove, ColorKing } from "../functions/King";
 import uuid from "react-uuid";
 import { useParams } from "react-router-dom";
 import { handlePieceElimination } from "../functions/handlePieceElimination";
-import socketIO from "socket.io-client";
-import * as io from "socket.io-client";
-var socket = io.connect("http://localhost:3005");
 
 interface BoardProps {
   mode: string;
@@ -53,7 +50,6 @@ export default function Board(props: BoardProps) {
         moveData: JSON.stringify(mo),
       };
 
-      console.log(JSON.stringify(data));
       fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
         method: "POST",
         headers: {
@@ -72,20 +68,41 @@ export default function Board(props: BoardProps) {
         });
     }
   }
-  useEffect(() => {
-    socket.on("getgameboard", (data) => {
-      if (data[0].movesLedger !== undefined) {
-        setMovesLedger(JSON.parse(data[0].movesLedger));
-      }
-    });
-  }, []);
-  socket.on("getgameboard", (data) => {
-    if (data[0].movesLedger !== undefined) {
-      setMovesLedger(JSON.parse(data[0].movesLedger));
-    }
-  });
+  async function getGameboardFromCode() {
+    if (gc?.length !== 8) return;
+    let data = {
+      GameCode: gc,
+    };
 
-  // create gameboard and gameboardColors
+    await fetch(
+      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify(data),
+      }
+    )
+      .then((r) => r.json())
+      .then((r2) => {
+        if (!r2.error) {
+          setGameboard(r2.gameboard);
+          setMovesLedger(r2.movesLedger);
+        } else {
+          window.location.pathname = "/";
+          localStorage.clear();
+        }
+      });
+  }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getGameboardFromCode();
+    }, 1_000);
+
+    return () => clearInterval(interval);
+  }, []);
   useEffect(() => {
     const gb = new Array(8);
     const bcg = new Array(8);
@@ -98,16 +115,10 @@ export default function Board(props: BoardProps) {
         bcg[bh1][bh2] = "";
       }
     }
+
     setGameboardColors(...bcg);
+    getGameboardFromCode();
   }, []);
-  socket.emit("gamecode", gc);
-  async function getGameboard() {
-    socket.on("getgameboard", async function (data) {
-      if (data[0].gameboard !== undefined) {
-        setGameboard(JSON.parse(data[0].gameboard));
-      }
-    });
-  }
 
   function handlePreviewReset() {
     const gbc = new Array(8);
@@ -121,10 +132,6 @@ export default function Board(props: BoardProps) {
     }
     setGameboardColors(...gbc);
   }
-
-  useEffect(() => {
-    getGameboard();
-  }, []);
 
   function handlePieceTooltip(pieceObj: any, yIndex: any, xIndex: any) {
     const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
@@ -171,7 +178,7 @@ export default function Board(props: BoardProps) {
   function isMyMove() {
     const l = JSON.parse(localStorage.getItem("user") ?? "{}");
     if (l === undefined || l.Color === undefined) return false;
-
+    if (movesLedger === undefined) return false;
     if (movesLedger === null || movesLedger.length === 0) {
       return true;
     }
