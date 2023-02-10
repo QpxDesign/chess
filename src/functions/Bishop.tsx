@@ -268,3 +268,129 @@ export function canBishopMove(
     return false;
   } catch (e) {}
 }
+export function ValidBishop(bcg: any, yIndex: any, xIndex: any) {
+  var ans = new Array(8);
+  for (var bh1 = 0; bh1 < ans.length; bh1++) {
+    ans[bh1] = new Array(8);
+    for (var bh2 = 0; bh2 < ans.length; bh2++) {
+      ans[bh1][bh2] = false;
+    }
+  }
+  //diagonals
+  var sidewaysForwardRightN = 1;
+  try {
+    try {
+      while (
+        bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] ===
+          null &&
+        bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] !==
+          undefined
+      ) {
+        ans[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] =
+          true;
+        sidewaysForwardRightN++;
+      }
+    } catch (e) {}
+    try {
+      if (
+        bcg[yIndex + sidewaysForwardRightN] !== undefined &&
+        bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] !==
+          undefined &&
+        bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN]
+          .color !== bcg[yIndex][xIndex].color
+      ) {
+        ans[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] =
+          true;
+      }
+    } catch (e) {}
+    var sidewaysForwardLeftN = 1;
+    try {
+      while (
+        bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] ===
+          null &&
+        bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
+          undefined
+      ) {
+        ans[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] =
+          true;
+        sidewaysForwardLeftN++;
+      }
+    } catch (e) {}
+
+    try {
+      if (
+        bcg[yIndex + sidewaysForwardLeftN] !== undefined &&
+        bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
+          undefined &&
+        bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN]
+          .color !== bcg[yIndex][xIndex].color
+      ) {
+        ans[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] =
+          true;
+      }
+    } catch (e) {}
+
+    var sidewaysBackwardsLeftN = 1;
+    try {
+      while (
+        bcg[yIndex - sidewaysBackwardsLeftN] !== undefined &&
+        bcg[yIndex - sidewaysBackwardsLeftN][
+          xIndex - sidewaysBackwardsLeftN
+        ] === null &&
+        bcg[yIndex - sidewaysBackwardsLeftN][
+          xIndex - sidewaysBackwardsLeftN
+        ] !== undefined
+      ) {
+        ans[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] =
+          true;
+        sidewaysBackwardsLeftN++;
+      }
+    } catch (e) {}
+    try {
+      if (
+        bcg[yIndex - sidewaysBackwardsLeftN] !== undefined &&
+        bcg[yIndex - sidewaysBackwardsLeftN][
+          xIndex - sidewaysBackwardsLeftN
+        ] !== undefined &&
+        ans[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN]
+          .color !== bcg[yIndex][xIndex].color
+      ) {
+        bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] =
+          true;
+      }
+    } catch (e) {}
+
+    var sidewaysBackwardsRightN = 1;
+    try {
+      while (
+        bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
+        bcg[yIndex - sidewaysBackwardsRightN][
+          xIndex + sidewaysBackwardsRightN
+        ] === null &&
+        ans[yIndex - sidewaysBackwardsRightN][
+          xIndex + sidewaysBackwardsRightN
+        ] !== undefined
+      ) {
+        bcg[yIndex - sidewaysBackwardsRightN][
+          xIndex + sidewaysBackwardsRightN
+        ] = true;
+        sidewaysBackwardsRightN++;
+      }
+    } catch (e) {}
+    try {
+      if (
+        bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
+        bcg[yIndex - sidewaysBackwardsRightN][
+          xIndex + sidewaysBackwardsRightN
+        ] !== undefined &&
+        bcg[yIndex + sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN]
+          .color !== bcg[yIndex][xIndex].color
+      ) {
+        ans[yIndex - sidewaysBackwardsRightN][
+          xIndex + sidewaysBackwardsRightN
+        ] = true;
+      }
+    } catch (e) {}
+  } catch (e) {}
+  return ans;
+}

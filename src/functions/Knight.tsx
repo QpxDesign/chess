@@ -174,3 +174,95 @@ export function canKnightMove(
   } catch (e) {}
   return false;
 }
+export function ValidKnight(bcg: any, yIndex: any, xIndex: any) {
+  var ans = new Array(8);
+  for (var bh1 = 0; bh1 < ans.length; bh1++) {
+    ans[bh1] = new Array(8);
+    for (var bh2 = 0; bh2 < ans.length; bh2++) {
+      ans[bh1][bh2] = false;
+    }
+  }
+  // up two over one
+  try {
+    if (bcg[yIndex + 2][xIndex + 1] === null) {
+      // pos pos
+      ans[yIndex + 2][xIndex + 1] = true;
+    } else if (
+      bcg[yIndex + 2][xIndex + 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + 2][xIndex + 1] = true;
+    }
+  } catch (e) {}
+  try {
+    if (bcg[yIndex - 2][xIndex + 1] === null) {
+      // neg pos
+      ans[yIndex - 2][xIndex + 1] = true;
+    } else if (
+      bcg[yIndex - 2][xIndex + 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - 2][xIndex + 1] = true;
+    }
+  } catch (e) {}
+  try {
+    if (bcg[yIndex + 2][xIndex - 1] === null) {
+      // pos neg
+      ans[yIndex + 2][xIndex - 1] = true;
+    } else if (
+      bcg[yIndex + 2][xIndex - 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + 2][xIndex - 1] = true;
+    }
+  } catch (e) {}
+  try {
+    if (bcg[yIndex - 2][xIndex - 1] === null) {
+      // neg neg
+      ans[yIndex - 2][xIndex - 1] = true;
+    } else if (
+      bcg[yIndex - 2][xIndex - 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - 2][xIndex - 1] = true;
+    }
+  } catch (e) {}
+  try {
+    if (bcg[yIndex + 1][xIndex + 2] === null) {
+      // pos pos
+      ans[yIndex + 1][xIndex + 2] = true;
+    } else if (
+      bcg[yIndex + 1][xIndex + 2].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + 1][xIndex + 2] = true;
+    }
+  } catch (e) {}
+  try {
+    if (bcg[yIndex - 1][xIndex + 2] === null) {
+      // neg pos
+      ans[yIndex - 1][xIndex + 2] = true;
+    } else if (
+      bcg[yIndex - 1][xIndex + 2].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - 1][xIndex + 2] = true;
+    }
+  } catch (e) {}
+  try {
+    if (bcg[yIndex + 1][xIndex - 2] === null) {
+      // pos neg
+      ans[yIndex + 1][xIndex - 2] = true;
+    } else if (
+      bcg[yIndex + 1][xIndex - 2].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + 1][xIndex - 2] = true;
+    }
+  } catch (e) {}
+  try {
+    if (bcg[yIndex - 1][xIndex - 2] === null) {
+      // neg neg
+      ans[yIndex - 1][xIndex - 2] = true;
+    } else if (
+      bcg[yIndex - 1][xIndex - 2].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - 1][xIndex - 2] = true;
+    }
+  } catch (e) {}
+
+  return ans;
+}

@@ -9,7 +9,7 @@ import { canKingMove, ColorKing } from "../functions/King";
 import uuid from "react-uuid";
 import { useParams } from "react-router-dom";
 import { handlePieceElimination } from "../functions/handlePieceElimination";
-
+import { CheckIfinCheck } from "../functions/inCheckmate";
 interface BoardProps {
   mode: string;
 }
@@ -21,6 +21,7 @@ export default function Board(props: BoardProps) {
   const [gameboardColors, setGameboardColors]: any = useState([[], []]);
   const [activePiece, setActivePiece]: any = useState({});
   const [moveValidated, setMoveValidated]: any = useState(true);
+  const [inCheck, setInCheck]: any = useState(false);
   const { gc } = useParams();
 
   function handleMove(
@@ -65,6 +66,26 @@ export default function Board(props: BoardProps) {
         .catch((error) => {});
     }
   }
+  function findKing(gameboard: any) {
+    const res = {
+      col: 0,
+      row: 0,
+    };
+    var color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color;
+    for (var bh1 = 0; bh1 < gameboard.length; bh1++) {
+      for (var bh2 = 0; bh2 < gameboard.length; bh2++) {
+        if (gameboard[bh1][bh2] !== null) {
+          if (gameboard[bh1][bh2].icon === "King") {
+            if (gameboard[bh1][bh2].color === color) {
+              res.col = bh1;
+              res.row = bh2;
+            }
+          }
+        }
+      }
+    }
+    return res;
+  }
   async function getGameboardFromCode() {
     if (gc?.length !== 8) return;
     let data = {
@@ -87,6 +108,20 @@ export default function Board(props: BoardProps) {
         if (!r2.error) {
           setGameboard(r2.gameboard);
           setMovesLedger(r2.movesLedger);
+          console.log(findKing(r2.gameboard));
+          setInCheck(
+            CheckIfinCheck(
+              r2.gameboard,
+              findKing(r2.gameboard).col,
+              findKing(r2.gameboard).row
+            )
+          );
+
+          if (inCheck) {
+            console.log("u in danger man");
+          } else {
+            console.log("coolio g");
+          }
         } else {
           window.location.pathname = "/";
           localStorage.clear();
@@ -132,7 +167,6 @@ export default function Board(props: BoardProps) {
 
   function handlePieceTooltip(pieceObj: any, yIndex: any, xIndex: any) {
     const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
-
     if (pieceObj === null || pieceObj === undefined) {
       return;
     }

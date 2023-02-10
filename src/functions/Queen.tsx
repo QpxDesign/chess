@@ -177,6 +177,190 @@ export function ColorQueen(bcg: any, yIndex: any, xIndex: any) {
 
   return bcg;
 }
+export function ValidQueen(bcg: any, yIndex: any, xIndex: any) {
+  var ans = new Array(8);
+  for (var bh1 = 0; bh1 < ans.length; bh1++) {
+    ans[bh1] = new Array(8);
+    for (var bh2 = 0; bh2 < ans.length; bh2++) {
+      ans[bh1][bh2] = false;
+    }
+  }
+  //forward/backward
+  var forwardN = 1;
+  try {
+    while (
+      bcg[yIndex + forwardN][xIndex] === null &&
+      bcg[yIndex + forwardN][xIndex] !== undefined
+    ) {
+      ans[yIndex + forwardN][xIndex] = true;
+      forwardN++;
+    }
+    if (
+      bcg[yIndex + forwardN] !== undefined &&
+      bcg[yIndex + forwardN][xIndex] !== undefined &&
+      bcg[yIndex + forwardN][xIndex].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + forwardN][xIndex] = true;
+    }
+  } catch (e) {}
+
+  var backwardN = 1;
+  try {
+    while (
+      bcg[yIndex - backwardN] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] === null
+    ) {
+      ans[yIndex - backwardN][xIndex] = true;
+      backwardN++;
+    }
+    if (
+      bcg[yIndex - backwardN] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] !== undefined &&
+      bcg[yIndex - backwardN][xIndex].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - backwardN][xIndex] = true;
+    }
+  } catch (e) {}
+
+  //sides
+  var rightN = 1;
+
+  try {
+    while (
+      bcg[yIndex][xIndex + rightN] === null &&
+      bcg[yIndex][xIndex + rightN] !== undefined
+    ) {
+      ans[yIndex][xIndex + rightN] = true;
+      rightN++;
+    }
+    if (
+      bcg[yIndex] !== undefined &&
+      bcg[yIndex][xIndex + rightN] !== undefined &&
+      bcg[yIndex][xIndex + rightN].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex][xIndex + rightN] = true;
+    }
+  } catch (e) {}
+  var leftN = 1;
+  try {
+    while (
+      bcg[yIndex][xIndex - leftN] === null &&
+      bcg[yIndex][xIndex - leftN] !== undefined
+    ) {
+      ans[yIndex][xIndex - leftN] = true;
+      leftN++;
+    }
+    if (
+      bcg[yIndex] !== undefined &&
+      bcg[yIndex][xIndex - leftN] !== undefined &&
+      bcg[yIndex][xIndex - leftN].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex][xIndex - leftN] = true;
+    }
+  } catch (e) {}
+
+  //diagonals
+  var sidewaysForwardRightN = 1;
+  try {
+    while (
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] ===
+        null &&
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] !==
+        undefined
+    ) {
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] =
+        true;
+      sidewaysForwardRightN++;
+    }
+    if (
+      bcg[yIndex + sidewaysForwardRightN] !== undefined &&
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] !==
+        undefined &&
+      bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] =
+        true;
+    }
+  } catch (e) {}
+
+  var sidewaysForwardLeftN = 1;
+  try {
+    while (
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] ===
+        null &&
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
+        undefined
+    ) {
+      ans[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] = true;
+      sidewaysForwardLeftN++;
+    }
+    if (
+      bcg[yIndex + sidewaysForwardLeftN] !== undefined &&
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] !==
+        undefined &&
+      bcg[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + sidewaysForwardLeftN][xIndex - sidewaysForwardLeftN] = true;
+    }
+  } catch (e) {}
+
+  var sidewaysBackwardsLeftN = 1;
+  try {
+    while (
+      bcg[yIndex - sidewaysBackwardsLeftN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] ===
+        null &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] !==
+        undefined
+    ) {
+      ans[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] =
+        true;
+      sidewaysBackwardsLeftN++;
+    }
+    if (
+      bcg[yIndex - sidewaysBackwardsLeftN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] !==
+        undefined &&
+      bcg[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - sidewaysBackwardsLeftN][xIndex - sidewaysBackwardsLeftN] =
+        true;
+    }
+  } catch (e) {}
+
+  var sidewaysBackwardsRightN = 1;
+  try {
+    while (
+      bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsRightN][
+        xIndex + sidewaysBackwardsRightN
+      ] === null &&
+      bcg[yIndex - sidewaysBackwardsRightN][
+        xIndex + sidewaysBackwardsRightN
+      ] !== undefined
+    ) {
+      ans[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN] =
+        true;
+      sidewaysBackwardsRightN++;
+    }
+    if (
+      bcg[yIndex - sidewaysBackwardsRightN] !== undefined &&
+      bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsLeftN] !==
+        undefined &&
+      bcg[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN]
+        .color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - sidewaysBackwardsRightN][xIndex + sidewaysBackwardsRightN] =
+        true;
+    }
+  } catch (e) {}
+
+  return ans;
+}
 export function canQueenMove(
   bcg: any,
   yIndex: any,

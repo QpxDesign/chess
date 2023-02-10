@@ -112,3 +112,54 @@ export function canPawnMove(
 
   return false;
 }
+export function ValidPawn(bcg: any, yIndex: any, xIndex: any, facing: any) {
+  //sides
+  var ans = new Array(8);
+  for (var bh1 = 0; bh1 < ans.length; bh1++) {
+    ans[bh1] = new Array(8);
+    for (var bh2 = 0; bh2 < ans.length; bh2++) {
+      ans[bh1][bh2] = false;
+    }
+  }
+  if (facing === "down") {
+    try {
+      if (bcg[yIndex + 1][xIndex] === null) {
+        ans[yIndex + 1][xIndex] = true;
+      }
+      try {
+        if (
+          bcg[yIndex + 1][xIndex + 1] !== null &&
+          bcg[yIndex + 1][xIndex + 1].color !== bcg[yIndex][xIndex].color
+        )
+          ans[yIndex + 1][xIndex + 1] = true;
+      } catch (e) {}
+      try {
+        if (
+          bcg[yIndex + 1][xIndex - 1] !== null &&
+          bcg[yIndex + 1][xIndex - 1].color !== bcg[yIndex][xIndex].color
+        )
+          ans[yIndex + 1][xIndex - 1] = true;
+      } catch (e) {}
+    } catch (e) {}
+  }
+  if (facing === "up") {
+    if (bcg[yIndex - 1][xIndex] === null) bcg[yIndex - 1][xIndex] = true;
+    // left diag
+    try {
+      if (
+        bcg[yIndex - 1][xIndex - 1] !== null &&
+        bcg[yIndex - 1][xIndex - 1].color !== bcg[yIndex][xIndex].color
+      )
+        ans[yIndex - 1][xIndex - 1] = true;
+    } catch (e) {}
+    try {
+      if (
+        bcg[yIndex - 1][xIndex + 1] !== null &&
+        bcg[yIndex - 1][xIndex + 1].color !== bcg[yIndex][xIndex].color
+      )
+        ans[yIndex - 1][xIndex + 1] = true;
+    } catch (e) {}
+  }
+
+  return ans;
+}

@@ -39,7 +39,6 @@ export function ColorRook(bcg: any, yIndex: any, xIndex: any) {
 
   return bcg;
 }
-
 export function canRookMove(
   bcg: any,
   yIndex: any,
@@ -95,4 +94,52 @@ export function canRookMove(
   } catch (e) {}
 
   return false;
+}
+export function ValidRook(bcg: any, yIndex: any, xIndex: any) {
+  var ans = new Array(8);
+  for (var bh1 = 0; bh1 < ans.length; bh1++) {
+    ans[bh1] = new Array(8);
+    for (var bh2 = 0; bh2 < ans.length; bh2++) {
+      ans[bh1][bh2] = false;
+    }
+  }
+  var forwardN = 1;
+  try {
+    while (
+      bcg[yIndex + forwardN] !== undefined &&
+      bcg[yIndex + forwardN][xIndex] === null &&
+      bcg[yIndex + forwardN][xIndex] !== undefined
+    ) {
+      ans[yIndex + forwardN][xIndex] = true;
+      forwardN++;
+    }
+    if (
+      bcg[yIndex + forwardN] !== undefined &&
+      bcg[yIndex + forwardN][xIndex] !== undefined &&
+      bcg[yIndex + forwardN][xIndex].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + forwardN][xIndex] = true;
+    }
+  } catch (e) {}
+
+  var backwardN = 1;
+  try {
+    while (
+      bcg[yIndex - backwardN] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] === null
+    ) {
+      ans[yIndex - backwardN][xIndex] = true;
+      backwardN++;
+    }
+    if (
+      bcg[yIndex - backwardN] !== undefined &&
+      bcg[yIndex - backwardN][xIndex] !== undefined &&
+      bcg[yIndex - backwardN][xIndex].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - backwardN][xIndex] = true;
+    }
+  } catch (e) {}
+
+  return ans;
 }
