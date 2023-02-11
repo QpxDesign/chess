@@ -9,7 +9,9 @@ import { canKingMove, ColorKing } from "../functions/King";
 import uuid from "react-uuid";
 import { useParams } from "react-router-dom";
 import { handlePieceElimination } from "../functions/handlePieceElimination";
-import { CheckIfinCheck } from "../functions/inCheckmate";
+import { CheckIfinCheck, inCheckmate } from "../functions/inCheckmate";
+import { CustomAlert } from "../functions/CustomAlert";
+
 interface BoardProps {
   mode: string;
 }
@@ -33,6 +35,31 @@ export default function Board(props: BoardProps) {
     nx: any,
     gc: any
   ) {
+    var color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color;
+
+    var tmpGameboard = JSON.parse(JSON.stringify(gameboard));
+    tmpGameboard[ny][nx] = tmpGameboard[oy][ox];
+    tmpGameboard[oy][ox] = null;
+
+    if (inCheck) {
+      if (
+        CheckIfinCheck(
+          tmpGameboard,
+          findKing(tmpGameboard, color).col,
+          findKing(tmpGameboard, color).row,
+          color
+        )
+      ) {
+        /*
+        CustomAlert(
+          "You're Still in Check Bozo.",
+          "You are in check, meaning that you have to move out of check in this move. This move did not do that.",
+          "Okay"
+        );*/
+        alert("You're Still in Check Bozo.");
+        return;
+      }
+    }
     setMoveValidated(false);
     if (gb[0].length !== 0) {
       pieceOBJ.row = ny;
@@ -51,7 +78,7 @@ export default function Board(props: BoardProps) {
         moveData: JSON.stringify(mo),
       };
 
-      fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
+      fetch("http://localhost:3001/handle-move", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,12 +93,11 @@ export default function Board(props: BoardProps) {
         .catch((error) => {});
     }
   }
-  function findKing(gameboard: any) {
+  function findKing(gameboard: any, color: any) {
     const res = {
       col: 0,
       row: 0,
     };
-    var color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color;
     for (var bh1 = 0; bh1 < gameboard.length; bh1++) {
       for (var bh2 = 0; bh2 < gameboard.length; bh2++) {
         if (gameboard[bh1][bh2] !== null) {
@@ -86,41 +112,76 @@ export default function Board(props: BoardProps) {
     }
     return res;
   }
+  function reverseColor(c: any) {
+    if (c === "white") return "black";
+    if (c === "black") return "white";
+  }
   async function getGameboardFromCode() {
+    var color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color;
+
     if (gc?.length !== 8) return;
     let data = {
       GameCode: gc,
     };
 
-    await fetch(
-      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(data),
-      }
-    )
+    await fetch("http://localhost:3001/get-gameboard-from-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(data),
+    })
       .then((r) => r.json())
       .then((r2) => {
         if (!r2.error) {
           setGameboard(r2.gameboard);
           setMovesLedger(r2.movesLedger);
-          console.log(findKing(r2.gameboard));
-          setInCheck(
+
+          if (
             CheckIfinCheck(
               r2.gameboard,
-              findKing(r2.gameboard).col,
-              findKing(r2.gameboard).row
+              findKing(r2.gameboard, color).col,
+              findKing(r2.gameboard, color).row,
+              color
+            )
+          ) {
+            setInCheck(true);
+          } else {
+            setInCheck(false);
+          }
+          // detect loss
+          if (
+            inCheckmate(
+              r2.gameboard,
+              findKing(r2.gameboard, color).col,
+              findKing(r2.gameboard, color).row,
+              color
+            )
+          ) {
+            alert("Ya done goofed clown. You're in checkmate rn amigo");
+            window.location.pathname = "/";
+          }
+          // detect win
+
+          console.log(
+            inCheckmate(
+              r2.gameboard,
+              findKing(r2.gameboard, reverseColor(color)).col,
+              findKing(r2.gameboard, reverseColor(color)).row,
+              reverseColor(color)
             )
           );
-
-          if (inCheck) {
-            console.log("u in danger man");
-          } else {
-            console.log("coolio g");
+          if (
+            inCheckmate(
+              r2.gameboard,
+              findKing(r2.gameboard, reverseColor(color)).col,
+              findKing(r2.gameboard, reverseColor(color)).row,
+              reverseColor(color)
+            )
+          ) {
+            alert("Winner winner chicken dinner");
+            window.location.pathname = "/";
           }
         } else {
           window.location.pathname = "/";

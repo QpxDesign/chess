@@ -210,11 +210,16 @@ input {
   .welcomescreen-background {
     background-color: black;
     display: flex;
+    margin-bottom: auto;
   }
   .welcomescreen-wrapper {
     align-items: center;
     justify-content: center;
     margin-top: 2em;
+    width: 100%;
+    height: 100%;
+    justify-content: flex-start;
+    margin-top: 15em;
   }
   .welcomescreen-wrapper h1 {
     margin-bottom: 0.25em;
@@ -226,6 +231,7 @@ input {
   font-weight: 100;
   font-size: 1.25em;
 }
-.welcomescreen-wrapper a:hover {
+.welcomescreen-background a:hover {
   font-style: italic !important;
+  color: red;
 }

@@ -5,18 +5,16 @@ import { ValidQueen } from "./Queen";
 import { ValidRook } from "./Rook";
 import { ValidKnight } from "./Knight";
 
-export function CheckIfinCheck(gameboard: any, kingY: any, kingX: any) {
+export function CheckIfinCheck(
+  gameboard: any,
+  kingY: any,
+  kingX: any,
+  color: any
+) {
   var gb2 = JSON.parse(JSON.stringify(gameboard));
   const gb = new Array(8);
   var moveable = new Array(8);
-  var color = "";
-  if (
-    JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color === undefined
-  ) {
-    return;
-  } else {
-    color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}")?.Color;
-  }
+
   // add default colors
   for (var i = 0; i < gb.length; i++) {
     moveable[i] = new Array(8);
@@ -77,4 +75,88 @@ function Merge2DArrays(arr1: any, arr2: any) {
     }
   }
   return ans;
+}
+export function inCheckmate(
+  gameboard: any,
+  kingY: any,
+  kingX: any,
+  color: any
+) {
+  if (!CheckIfinCheck(gameboard, kingY, kingX, color)) {
+    return false;
+  }
+
+  // up
+  try {
+    if (
+      gameboard[kingY + 1][kingX] === null &&
+      !CheckIfinCheck(gameboard, kingY + 1, kingX, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  // down
+  try {
+    if (
+      gameboard[kingY - 1][kingX] === null &&
+      !CheckIfinCheck(gameboard, kingY - 1, kingX, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  // left
+  try {
+    if (
+      gameboard[kingY][kingX - 1] === null &&
+      !CheckIfinCheck(gameboard, kingY, kingX - 1, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  // right
+  try {
+    if (
+      gameboard[kingY][kingX + 1] === null &&
+      !CheckIfinCheck(gameboard, kingY, kingX + 1, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  // up right
+  try {
+    if (
+      gameboard[kingY + 1][kingX + 1] === null &&
+      !CheckIfinCheck(gameboard, kingY + 1, kingX + 1, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  // up left
+  try {
+    if (
+      gameboard[kingY + 1][kingX - 1] === null &&
+      !CheckIfinCheck(gameboard, kingY + 1, kingX - 1, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  // down left
+  try {
+    if (
+      gameboard[kingY - 1][kingX - 1] === null &&
+      !CheckIfinCheck(gameboard, kingY - 1, kingX - 1, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  // down right
+  try {
+    if (
+      gameboard[kingY - 1][kingX + 1] === null &&
+      !CheckIfinCheck(gameboard, kingY - 1, kingX + 1, color)
+    ) {
+      return false;
+    }
+  } catch (e) {}
+  return true;
 }

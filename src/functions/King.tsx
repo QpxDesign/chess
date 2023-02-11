@@ -31,6 +31,46 @@ export function ColorKing(bcg: any, yIndex: any, xIndex: any) {
       bcg[yIndex][xIndex + 1] = "purple";
     }
   } catch (e) {}
+  // up right
+  try {
+    if (bcg[yIndex + 1][xIndex + 1] === null) {
+      bcg[yIndex + 1][xIndex + 1] = "green";
+    } else if (
+      bcg[yIndex + 1][xIndex + 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      bcg[yIndex + 1][xIndex + 1] = "purple";
+    }
+  } catch (e) {}
+  // up left
+  try {
+    if (bcg[yIndex + 1][xIndex - 1] === null) {
+      bcg[yIndex + 1][xIndex - 1] = "green";
+    } else if (
+      bcg[yIndex + 1][xIndex - 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      bcg[yIndex + 1][xIndex - 1] = "purple";
+    }
+  } catch (e) {}
+  // down left
+  try {
+    if (bcg[yIndex - 1][xIndex - 1] === null) {
+      bcg[yIndex - 1][xIndex - 1] = "green";
+    } else if (
+      bcg[yIndex - 1][xIndex - 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      bcg[yIndex - 1][xIndex - 1] = "purple";
+    }
+  } catch (e) {}
+  // down right
+  try {
+    if (bcg[yIndex - 1][xIndex + 1] === null) {
+      bcg[yIndex - 1][xIndex + 1] = "green";
+    } else if (
+      bcg[yIndex - 1][xIndex + 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      bcg[yIndex - 1][xIndex + 1] = "purple";
+    }
+  } catch (e) {}
   return bcg;
 }
 
@@ -71,6 +111,70 @@ export function canKingMove(
       if (yIndex === newY && xIndex + 1 === newX) return true;
     } else if (bcg[yIndex][xIndex + 1].color !== bcg[yIndex][xIndex].color) {
       if (yIndex === newY && xIndex + 1 === newX) return true;
+    }
+  } catch (e) {}
+  // up right
+  try {
+    if (
+      bcg[yIndex + 1][xIndex + 1] === null &&
+      yIndex + 1 === newY &&
+      xIndex + 1 === newX
+    ) {
+      return true;
+    } else if (
+      bcg[yIndex + 1][xIndex + 1].color !== bcg[yIndex][xIndex].color &&
+      yIndex + 1 === newY &&
+      xIndex + 1 === newX
+    ) {
+      return true;
+    }
+  } catch (e) {}
+  // up left
+  try {
+    if (
+      bcg[yIndex + 1][xIndex - 1] === null &&
+      yIndex + 1 === newY &&
+      xIndex - 1 === newX
+    ) {
+      return true;
+    } else if (
+      bcg[yIndex + 1][xIndex - 1].color !== bcg[yIndex][xIndex].color &&
+      yIndex + 1 === newY &&
+      xIndex - 1 === newX
+    ) {
+      return true;
+    }
+  } catch (e) {}
+  // down left
+  try {
+    if (
+      bcg[yIndex - 1][xIndex - 1] === null &&
+      yIndex - 1 === newY &&
+      xIndex - 1 === newX
+    ) {
+      return true;
+    } else if (
+      bcg[yIndex - 1][xIndex - 1].color !== bcg[yIndex][xIndex].color &&
+      yIndex - 1 === newY &&
+      xIndex - 1 === newX
+    ) {
+      return true;
+    }
+  } catch (e) {}
+  // down right
+  try {
+    if (
+      bcg[yIndex - 1][xIndex + 1] === null &&
+      yIndex - 1 === newY &&
+      xIndex + 1 === newX
+    ) {
+      return true;
+    } else if (
+      bcg[yIndex - 1][xIndex + 1].color !== bcg[yIndex][xIndex].color &&
+      yIndex - 1 === newY &&
+      xIndex + 1 === newX
+    ) {
+      return true;
     }
   } catch (e) {}
   return false;
@@ -114,6 +218,46 @@ export function ValidKing(bcg: any, yIndex: any, xIndex: any) {
       ans[yIndex][xIndex + 1] = true;
     } else if (bcg[yIndex][xIndex + 1].color !== bcg[yIndex][xIndex].color) {
       ans[yIndex][xIndex + 1] = true;
+    }
+  } catch (e) {}
+  // up right
+  try {
+    if (bcg[yIndex + 1][xIndex + 1] === null) {
+      ans[yIndex + 1][xIndex + 1] = true;
+    } else if (
+      bcg[yIndex + 1][xIndex + 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + 1][xIndex + 1] = true;
+    }
+  } catch (e) {}
+  // up left
+  try {
+    if (bcg[yIndex + 1][xIndex - 1] === null) {
+      ans[yIndex + 1][xIndex - 1] = true;
+    } else if (
+      bcg[yIndex + 1][xIndex - 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex + 1][xIndex - 1] = true;
+    }
+  } catch (e) {}
+  // down left
+  try {
+    if (bcg[yIndex - 1][xIndex - 1] === null) {
+      ans[yIndex - 1][xIndex - 1] = true;
+    } else if (
+      bcg[yIndex - 1][xIndex - 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - 1][xIndex - 1] = true;
+    }
+  } catch (e) {}
+  // down right
+  try {
+    if (bcg[yIndex - 1][xIndex + 1] === null) {
+      ans[yIndex - 1][xIndex + 1] = true;
+    } else if (
+      bcg[yIndex - 1][xIndex + 1].color !== bcg[yIndex][xIndex].color
+    ) {
+      ans[yIndex - 1][xIndex + 1] = true;
     }
   } catch (e) {}
   return ans;
