@@ -78,7 +78,7 @@ export default function Board(props: BoardProps) {
         moveData: JSON.stringify(mo),
       };
 
-      fetch("https://ches-api.quinnpatwardhan.com/handle-move", {
+      fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -125,7 +125,7 @@ export default function Board(props: BoardProps) {
     };
 
     await fetch(
-      "https://ches-api.quinnpatwardhan.com/get-gameboard-from-code",
+      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
       {
         method: "POST",
         headers: {

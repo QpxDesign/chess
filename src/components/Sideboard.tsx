@@ -19,7 +19,7 @@ export default function Sideboard() {
       GameCode: gc,
     };
 
-    await fetch("https://ches-api.quinnpatwardhan.com/get-moves-from-code", {
+    await fetch("https://chess-api.quinnpatwardhan.com/get-moves-from-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
