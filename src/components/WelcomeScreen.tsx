@@ -65,6 +65,16 @@ export default function WelcomeScreen() {
       <div className="welcomescreen-wrapper">
         {" "}
         <h1>Welcome to qChess</h1>
+        <label
+          style={{
+            fontWeight: 100,
+            margin: 0,
+            marginBottom: ".5em",
+            fontSize: "1em",
+          }}
+        >
+          Version 0.1
+        </label>
         <div className="form-wrapper">
           <input
             value={username}
