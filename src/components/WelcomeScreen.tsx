@@ -15,7 +15,7 @@ export default function WelcomeScreen() {
       Color: "white",
     };
     localStorage.setItem("user", JSON.stringify(data));
-    await fetch("http://localhost:3001/generate-link", {
+    await fetch("https://chess-api.quinnpatwardhan.com/generate-link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export default function WelcomeScreen() {
       Color: "black",
     };
     localStorage.setItem("user", JSON.stringify(data));
-    await fetch("http://localhost:3001/handle-game-join", {
+    await fetch("https://chess-api.quinnpatwardhan.com/handle-game-join", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
