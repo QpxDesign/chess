@@ -82,7 +82,7 @@ export default function Board(props: BoardProps) {
         GameCode: gc,
         gameboard: JSON.stringify(gb),
         moveData: JSON.stringify(mo),
-        movesLedger: movesLedger,
+        movesLedger: JSON.stringify(movesLedger),
         Color: color,
       };
       fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
