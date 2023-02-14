@@ -82,6 +82,7 @@ export default function Board(props: BoardProps) {
         GameCode: gc,
         gameboard: JSON.stringify(gb),
         moveData: JSON.stringify(mo),
+        movesLedger: movesLedger,
         Color: color,
       };
       fetch("http://localhost:3001/handle-move", {
