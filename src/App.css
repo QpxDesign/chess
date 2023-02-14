@@ -303,19 +303,27 @@ input {
   color: black;
   gap: 0.5em;
   position: absolute;
-  padding: 0.25em 0.75em;
-  border-radius: 0em 0em 1em 0em !important;
+  padding: 0.25em 1.5em;
+  border-radius: 0em 0em 1em 0em;
   background-color: #d4d4d4;
   z-index: 9999;
 }
 .enemy-info h5 {
   bottom: 0;
   right: 0 !important;
-  border-radius: 1em 0em 0em 0em !important;
+  border-radius: 1em 0em 0em 0em;
 }
 .flip {
   transform: rotate(180deg);
 }
-.flip img {
+.flip img,
+.flip h5 {
   transform: rotate(180deg);
+}
+.flip .enemy-info h5 {
+  border-radius: 0em 0em 1000em 0em;
+}
+
+.flip .user-info h5 {
+  border-radius: 1000em 0em 0em 0em !important;
 }

@@ -85,7 +85,7 @@ export default function Board(props: BoardProps) {
         movesLedger: JSON.stringify(movesLedger),
         Color: color,
       };
-      fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
+      fetch("http://localhost:3001/handle-move", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,23 +132,22 @@ export default function Board(props: BoardProps) {
       GameCode: gc,
     };
 
-    await fetch(
-      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(data),
-      }
-    )
+    await fetch("http://localhost:3001/get-gameboard-from-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(data),
+    })
       .then((r) => r.json())
       .then((r2) => {
         if (!r2.error) {
           setGameboard(r2.gameboard);
           setMovesLedger(r2.movesLedger);
+
           setMetadata(r2);
+          console.log(metadata);
           if (
             CheckIfinCheck(
               r2.gameboard,
@@ -538,18 +537,6 @@ export default function Board(props: BoardProps) {
 
   return (
     <>
-      <div className="user-info">
-        <h5>
-          <FaUserAlt />
-          {JSON.parse(localStorage.getItem("user") ?? "{}").Username}
-        </h5>
-      </div>
-      <div className="enemy-info">
-        <h5>
-          <FaUserAlt />
-          {getEnemyUsername(metadata)}
-        </h5>
-      </div>
       <div
         className={
           JSON.parse(localStorage.getItem("user") ?? "{}").Color === "black"
@@ -558,6 +545,18 @@ export default function Board(props: BoardProps) {
         }
       >
         <div className="chess-board ">
+          <div className="user-info">
+            <h5>
+              <FaUserAlt />
+              {JSON.parse(localStorage.getItem("user") ?? "{}").Username}
+            </h5>
+          </div>
+          <div className="enemy-info">
+            <h5>
+              <FaUserAlt />
+              {getEnemyUsername(metadata)}
+            </h5>
+          </div>
           {gameboard.map((item1: any, yIndex: any) => {
             return (
               <div className="row" key={item1.length * yIndex + uuid()}>

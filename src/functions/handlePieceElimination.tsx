@@ -39,7 +39,7 @@ export function handlePieceElimination(
         moveData: JSON.stringify(mo),
       };
 
-      await fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
+      await fetch("http://localhost:3001/handle-move", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
