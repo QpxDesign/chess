@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { CustomAlert } from "../functions/CustomAlert";
 
 export default function WelcomeScreen() {
-  const [link, setLink]: any = useState("");
   const [username, setUsername]: any = useState("");
   const [code, setCode]: any = useState("");
+  const { gc } = useParams();
 
   async function handleGenerateLink() {
     if (username.length < 3 || code !== "") return;
@@ -13,7 +15,7 @@ export default function WelcomeScreen() {
       Color: "white",
     };
     localStorage.setItem("user", JSON.stringify(data));
-    await fetch("https://chess-api.quinnpatwardhan.com/generate-link", {
+    await fetch("http://localhost:3001/generate-link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,20 +29,19 @@ export default function WelcomeScreen() {
           "user",
           `{"Username":"${username}","Color":"white"}`
         );
-        setLink(window.location + "gamecode/" + r2.gID);
-        setCode(r2.gID);
+        window.location.pathname = "/gamecode/" + r2.gID;
       });
   }
-
-  async function handleGameJoin() {
-    if (code.length !== 8 || code === "") return;
+  async function handleGameJoin(gamecode: any) {
+    localStorage.clear();
+    if (gamecode.length !== 8) return;
     let data = {
       Username: username,
-      GameCode: code,
+      GameCode: gamecode,
       Color: "black",
     };
     localStorage.setItem("user", JSON.stringify(data));
-    await fetch("https://chess-api.quinnpatwardhan.com/handle-game-join", {
+    await fetch("http://localhost:3001/handle-game-join", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -55,60 +56,92 @@ export default function WelcomeScreen() {
             "user",
             `{"Username":"${username}","Color":"black"}`
           );
-          window.location.pathname = "/gamecode/" + code;
+          window.location.pathname = "/gamecode/" + gamecode;
         }
       });
   }
-  return (
-    <>
-      <div className="welcomescreen-background"></div>
-      <div className="welcomescreen-wrapper">
-        {" "}
-        <h1>Welcome to qChess</h1>
-        <label
-          style={{
-            fontWeight: 100,
-            margin: 0,
-            marginBottom: ".5em",
-            fontSize: "1em",
-          }}
-        >
-          Version 0.1
-        </label>
-        <div className="form-wrapper">
-          <input
-            value={username}
-            placeholder="username"
-            className="username-input"
-            onChange={(e) => setUsername(e.target.value)}
-          ></input>
-          <div className="v-stack"></div>
-          <div className="h-stack">
-            <input value={link} placeholder="link"></input>
-            <button
-              onClick={() => handleGenerateLink()}
-              className="cool-purple-button"
-            >
-              Generate link (Use this to join)
-            </button>
+  if (gc !== undefined) {
+    return (
+      <>
+        <div className="welcomescreen-background"></div>
+        <div className="welcomescreen-wrapper">
+          {" "}
+          <h1>Welcome to qChess</h1>
+          <label
+            style={{
+              fontWeight: 100,
+              margin: 0,
+              marginBottom: ".5em",
+              fontSize: "1em",
+            }}
+          >
+            Version 0.2
+          </label>
+          <div className="form-wrapper">
+            <div className="h-stack">
+              <input
+                value={username}
+                placeholder="username"
+                className="username-input"
+                onChange={(e) => setUsername(e.target.value)}
+              ></input>
+              <button
+                onClick={() => {
+                  handleGameJoin(gc);
+                }}
+                className="cool-purple-button"
+                style={{ fontSize: "1.25em" }}
+              >
+                Play
+              </button>
+            </div>
+
+            <Link to="nqueens" style={{ margin: ".25em auto" }}>
+              nQueens Visualizer
+            </Link>
           </div>
-          <div className="h-stack" style={{ marginTop: "1em" }}>
-            <input
-              placeholder="code"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-            />
-            <button
-              onClick={() => handleGameJoin()}
-              className="cool-purple-button"
-            >
-              Join Game (Send this to who you want to join)
-            </button>
-          </div>
-          <div className="modes-wrapper"></div>
         </div>
-        <Link to="nqueens">nQueens Visualizer</Link>
-      </div>
-    </>
-  );
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className="welcomescreen-background"></div>
+        <div className="welcomescreen-wrapper">
+          {" "}
+          <h1>Welcome to qChess</h1>
+          <label
+            style={{
+              fontWeight: 100,
+              margin: 0,
+              marginBottom: ".5em",
+              fontSize: "1em",
+            }}
+          >
+            Version 0.2
+          </label>
+          <div className="form-wrapper">
+            <div className="h-stack">
+              {" "}
+              <input
+                value={username}
+                placeholder="username"
+                className="username-input"
+                onChange={(e) => setUsername(e.target.value)}
+              ></input>{" "}
+              <button
+                onClick={() => handleGenerateLink()}
+                className="cool-purple-button"
+                style={{ fontSize: "1.25em" }}
+              >
+                Generate link
+              </button>
+            </div>
+            <div className="modes-wrapper"></div>
+          </div>
+          <Link to="nqueens">nQueens Visualizer</Link>
+        </div>
+      </>
+    );
+  }
 }

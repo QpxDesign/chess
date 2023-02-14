@@ -1,6 +1,36 @@
-export function ColorPawn(bcg: any, yIndex: any, xIndex: any, facing: any) {
+export function ColorPawn(
+  bcg: any,
+  yIndex: any,
+  xIndex: any,
+  facing: any,
+  movesLedger: any,
+  gameboard: any
+) {
   //sides
   if (facing === "down") {
+    try {
+      if (
+        movesLedger.filter(
+          (m: any) => m.pieceOBJ.id === gameboard[yIndex][xIndex].id
+        ).length === 0
+      ) {
+        if (bcg[yIndex + 1][xIndex] === null) {
+          bcg[yIndex + 1][xIndex] = "green";
+          if (bcg[yIndex + 2][xIndex] === null) {
+            bcg[yIndex + 2][xIndex] = "green";
+          } else {
+            if (bcg[yIndex + 2][xIndex].color !== bcg[yIndex][xIndex].color) {
+              bcg[yIndex + 1][xIndex] = "purple";
+            }
+          }
+        } else {
+          if (bcg[yIndex + 1][xIndex].color !== bcg[yIndex][xIndex].color) {
+            bcg[yIndex + 1][xIndex] = "purple";
+          }
+        }
+      }
+    } catch (e) {}
+
     try {
       if (bcg[yIndex + 1][xIndex] === null) {
         bcg[yIndex + 1][xIndex] = "green";
@@ -22,6 +52,20 @@ export function ColorPawn(bcg: any, yIndex: any, xIndex: any, facing: any) {
     } catch (e) {}
   }
   if (facing === "up") {
+    try {
+      if (
+        movesLedger.filter(
+          (m: any) => m.pieceOBJ.id === gameboard[yIndex][xIndex].id
+        ).length === 0
+      ) {
+        if (bcg[yIndex - 1][xIndex] === null) {
+          bcg[yIndex - 1][xIndex] = "green";
+          if (bcg[yIndex - 2][xIndex] === null) {
+            bcg[yIndex - 2][xIndex] = "green";
+          }
+        }
+      }
+    } catch (e) {}
     if (bcg[yIndex - 1][xIndex] === null) bcg[yIndex - 1][xIndex] = "green";
     // left diag
     try {
@@ -49,9 +93,29 @@ export function canPawnMove(
   xIndex: any,
   facing: any,
   newY: any,
-  newX: any
+  newX: any,
+  movesLedger: any,
+  gameboard: any
 ) {
   if (facing === "down") {
+    try {
+      if (
+        movesLedger.filter(
+          (m: any) => m.pieceOBJ.id === gameboard[yIndex][xIndex].id
+        ).length === 0
+      ) {
+        if (
+          gameboard[yIndex + 1][xIndex] === null &&
+          gameboard[yIndex + 2][xIndex] === null &&
+          yIndex + 2 === newY &&
+          xIndex === newX
+        ) {
+          return true;
+        }
+      }
+    } catch (e) {}
+    try {
+    } catch (e) {}
     try {
       if (
         bcg[yIndex + 1][xIndex - 1] !== null &&
@@ -79,6 +143,22 @@ export function canPawnMove(
     } catch (e) {}
   }
   if (facing === "up") {
+    try {
+      if (
+        movesLedger.filter(
+          (m: any) => m.pieceOBJ.id === gameboard[yIndex][xIndex].id
+        ).length === 0
+      ) {
+        if (
+          gameboard[yIndex - 1][xIndex] === null &&
+          gameboard[yIndex - 2][xIndex] === null &&
+          yIndex - 2 === newY &&
+          xIndex === newX
+        ) {
+          return true;
+        }
+      }
+    } catch (e) {}
     try {
       if (yIndex - 1 === newY && xIndex === newX) {
         if (bcg[yIndex - 1][xIndex] !== null) {
@@ -143,7 +223,10 @@ export function ValidPawn(bcg: any, yIndex: any, xIndex: any, facing: any) {
     } catch (e) {}
   }
   if (facing === "up") {
-    if (bcg[yIndex - 1][xIndex] === null) bcg[yIndex - 1][xIndex] = true;
+    try {
+      if (bcg[yIndex - 1][xIndex] === null) bcg[yIndex - 1][xIndex] = true;
+    } catch (e) {}
+
     // left diag
     try {
       if (

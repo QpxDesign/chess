@@ -16,6 +16,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/gamecode/:gc" element={<Game />} />
         <Route path="/nqueens" element={<Nqueens />} />
+        <Route path="/join-game/:gc" element={<HomePage />} />
       </Routes>
     </Router>
   );

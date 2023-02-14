@@ -11,19 +11,24 @@ import { useParams } from "react-router-dom";
 import { handlePieceElimination } from "../functions/handlePieceElimination";
 import { CheckIfinCheck, inCheckmate } from "../functions/inCheckmate";
 import { CustomAlert } from "../functions/CustomAlert";
+import { isMyMove } from "../functions/isMyMove";
+import { reverseColor } from "../functions/reverseColor";
+import { determineClassName } from "../functions/determineClassName";
+import { FaUserAlt } from "react-icons/fa";
+import { getEnemyUsername } from "../functions/getEnemyUsername";
 
 interface BoardProps {
   mode: string;
 }
 
 export default function Board(props: BoardProps) {
-  const size = [1, 2, 3, 4, 5, 6, 7, 8];
   const [gameboard, setGameboard]: any = useState([[], []]);
   const [movesLedger, setMovesLedger]: any = useState([]);
   const [gameboardColors, setGameboardColors]: any = useState([[], []]);
   const [activePiece, setActivePiece]: any = useState({});
   const [moveValidated, setMoveValidated]: any = useState(true);
   const [inCheck, setInCheck]: any = useState(false);
+  const [metadata, setMetadata]: any = useState({});
   const { gc } = useParams();
 
   function handleMove(
@@ -36,7 +41,6 @@ export default function Board(props: BoardProps) {
     gc: any
   ) {
     var color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color;
-
     var tmpGameboard = JSON.parse(JSON.stringify(gameboard));
     tmpGameboard[ny][nx] = tmpGameboard[oy][ox];
     tmpGameboard[oy][ox] = null;
@@ -61,6 +65,8 @@ export default function Board(props: BoardProps) {
       }
     }
     setMoveValidated(false);
+    var color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color;
+
     if (gb[0].length !== 0) {
       pieceOBJ.row = ny;
       pieceOBJ.col = nx;
@@ -76,9 +82,9 @@ export default function Board(props: BoardProps) {
         GameCode: gc,
         gameboard: JSON.stringify(gb),
         moveData: JSON.stringify(mo),
+        Color: color,
       };
-
-      fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
+      fetch("http://localhost:3001/handle-move", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -87,10 +93,12 @@ export default function Board(props: BoardProps) {
         body: JSON.stringify(data),
       })
         .then((response) => response.json())
-        .then((data) => {
+        .then((d) => {
           setMoveValidated(true);
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }
   function findKing(gameboard: any, color: any) {
@@ -112,11 +120,10 @@ export default function Board(props: BoardProps) {
     }
     return res;
   }
-  function reverseColor(c: any) {
-    if (c === "white") return "black";
-    if (c === "black") return "white";
-  }
   async function getGameboardFromCode() {
+    if (localStorage.getItem("user") === null) {
+      window.location.pathname = `/join-game/${gc}`;
+    }
     var color = JSON.parse(localStorage.getItem("user") ?? "{Color:''}").Color;
 
     if (gc?.length !== 8) return;
@@ -124,23 +131,20 @@ export default function Board(props: BoardProps) {
       GameCode: gc,
     };
 
-    await fetch(
-      "https://chess-api.quinnpatwardhan.com/get-gameboard-from-code",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-        },
-        body: JSON.stringify(data),
-      }
-    )
+    await fetch("http://localhost:3001/get-gameboard-from-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(data),
+    })
       .then((r) => r.json())
       .then((r2) => {
         if (!r2.error) {
           setGameboard(r2.gameboard);
           setMovesLedger(r2.movesLedger);
-
+          setMetadata(r2);
           if (
             CheckIfinCheck(
               r2.gameboard,
@@ -166,15 +170,6 @@ export default function Board(props: BoardProps) {
             window.location.pathname = "/";
           }
           // detect win
-
-          console.log(
-            inCheckmate(
-              r2.gameboard,
-              findKing(r2.gameboard, reverseColor(color)).col,
-              findKing(r2.gameboard, reverseColor(color)).row,
-              reverseColor(color)
-            )
-          );
           if (
             inCheckmate(
               r2.gameboard,
@@ -215,7 +210,34 @@ export default function Board(props: BoardProps) {
     setGameboardColors(...bcg);
     getGameboardFromCode();
   }, []);
-
+  useEffect(() => {
+    const l = JSON.parse(localStorage.getItem("user") ?? "{}");
+    if (
+      metadata.playerOneUsername === undefined ||
+      metadata.playerTwoUsername === undefined
+    ) {
+      return;
+    }
+    if (metadata.playerOneUsername === l.Username) {
+      var data = {
+        Username: l.Username,
+        GameCode: gc,
+        Color: "white",
+      };
+      localStorage.setItem("user", JSON.stringify(data));
+    } else if (metadata.playerTwoUsername === l.Username) {
+      var data = {
+        Username: l.Username,
+        GameCode: gc,
+        Color: "black",
+      };
+      localStorage.setItem("user", JSON.stringify(data));
+    } else {
+      //reset localstorage and send em back to the home page
+      localStorage.clear();
+      // window.location.pathname = "/";
+    }
+  }, [gameboard]);
   function handlePreviewReset() {
     const gbc = new Array(8);
     for (var i = 0; i < gbc.length; i++) {
@@ -228,7 +250,6 @@ export default function Board(props: BoardProps) {
     }
     setGameboardColors(...gbc);
   }
-
   function handlePieceTooltip(pieceObj: any, yIndex: any, xIndex: any) {
     const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
     if (pieceObj === null || pieceObj === undefined) {
@@ -238,7 +259,14 @@ export default function Board(props: BoardProps) {
     var gb = JSON.parse(JSON.stringify(gameboard));
     var gbc = JSON.parse(JSON.stringify(gameboardColors));
     if (pieceObj.icon === "Pawn") {
-      gbc = ColorPawn(gb, yIndex, xIndex, pieceObj.facing);
+      gbc = ColorPawn(
+        gb,
+        yIndex,
+        xIndex,
+        pieceObj.facing,
+        movesLedger,
+        gameboard
+      );
     }
     if (pieceObj.icon === "Queen") {
       gbc = ColorQueen(gb, yIndex, xIndex);
@@ -264,27 +292,13 @@ export default function Board(props: BoardProps) {
         pieceObj !== null &&
         pieceObj.color !== undefined &&
         pieceObj.color === l &&
-        isMyMove()
+        isMyMove(movesLedger)
       ) {
         handlePieceTooltip(pieceObj, yIndex, xIndex);
       }
     }
   }
-  function isMyMove() {
-    const l = JSON.parse(localStorage.getItem("user") ?? "{}");
-    if (l === undefined || l.Color === undefined) return false;
-    if (movesLedger === undefined) return false;
-    if (movesLedger === null || movesLedger.length === 0) {
-      return true;
-    }
-    if (l.Color === movesLedger[movesLedger.length - 1].pieceOBJ.color) {
-      return false;
-    } else if (l.Color !== movesLedger[movesLedger.length - 1].pieceOBJ.color) {
-      return true;
-    }
-    return false;
-  }
-  async function handleSquareClick(currentY: any, currentX: any) {
+  function handleSquareClick(currentY: any, currentX: any) {
     var pieceObj = gameboard[currentY][currentX];
     const l = JSON.parse(localStorage.getItem("user") ?? "{}")?.Color;
 
@@ -310,11 +324,19 @@ export default function Board(props: BoardProps) {
           currentX,
           activePiece,
           gameboard,
+          movesLedger,
           gc
         ) !== undefined
       ) {
         setGameboard(
-          handlePieceElimination(currentY, currentX, activePiece, gameboard, gc)
+          handlePieceElimination(
+            currentY,
+            currentX,
+            activePiece,
+            gameboard,
+            movesLedger,
+            gc
+          )
         );
         setActivePiece({});
       }
@@ -326,7 +348,7 @@ export default function Board(props: BoardProps) {
         (activePiece.id === undefined ||
           pieceObj.id === undefined ||
           activePiece?.id !== pieceObj?.id) &&
-        isMyMove()
+        isMyMove(movesLedger)
       ) {
         Object.assign(pieceObj, { row: currentY ?? "" });
         Object.assign(pieceObj, { col: currentX ?? "" });
@@ -345,7 +367,11 @@ export default function Board(props: BoardProps) {
         setActivePiece({});
         handlePreviewReset();
       }
-    } else if (activePiece.id !== undefined && isMyMove() && moveValidated) {
+    } else if (
+      activePiece.id !== undefined &&
+      isMyMove(movesLedger) &&
+      moveValidated
+    ) {
       // handle piece move
 
       if (activePiece.icon === "Pawn") {
@@ -356,7 +382,9 @@ export default function Board(props: BoardProps) {
             activePiece.col,
             activePiece.facing,
             currentY,
-            currentX
+            currentX,
+            movesLedger,
+            gameboard
           )
         ) {
           setMoveValidated(false);
@@ -503,70 +531,29 @@ export default function Board(props: BoardProps) {
       handlePreviewReset();
     }
   }
-  function determineClassName(y: any, x: any) {
-    var class_name = "square ";
-    if ((y % 2 === 0 && x % 2 === 0) || (y % 2 === 1 && x % 2 === 1)) {
-      class_name += "dark ";
-    } else {
-      class_name += "light ";
-    }
 
-    if (
-      gameboardColors !== undefined &&
-      gameboardColors[y] !== undefined &&
-      gameboardColors[y][x] !== undefined
-    ) {
-      class_name += gameboardColors[y][x];
-      class_name += " ";
-    }
-    try {
-      if (activePiece.id === gameboard[y][x].id) class_name += "inplay ";
-    } catch (e) {}
-
-    return class_name;
-  }
-  if (props.mode === "display") {
-    return (
-      <>
-        <div className="chess-board">
-          {size.map((item1: any, yIndex: any) => {
-            return (
-              <div className="row" key={item1.length * yIndex + uuid()}>
-                {size.map((item2: any, xIndex: any) => {
-                  return (
-                    <div
-                      key={String(item2?.id) + uuid()}
-                      onClick={() => handleSquareClick(yIndex, xIndex)}
-                      className={determineClassName(yIndex, xIndex)}
-                    >
-                      {item2 !== undefined &&
-                      item2 !== null &&
-                      item2.icon !== undefined ? (
-                        <img
-                          src={`/assets/pieces/${item2.icon}-${item2.color}.svg`}
-                          className={item2.color}
-                          alt={item2.icon}
-                          onMouseEnter={() =>
-                            handleMouseOver(item2, yIndex, xIndex)
-                          }
-                          onMouseLeave={() => handleMouseLeave()}
-                        />
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            );
-          })}
-        </div>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <div className="chess-board">
+  return (
+    <>
+      <div className="user-info">
+        <h5>
+          <FaUserAlt />
+          {JSON.parse(localStorage.getItem("user") ?? "{}").Username}
+        </h5>
+      </div>
+      <div className="enemy-info">
+        <h5>
+          <FaUserAlt />
+          {getEnemyUsername(metadata)}
+        </h5>
+      </div>
+      <div
+        className={
+          JSON.parse(localStorage.getItem("user") ?? "{}").Color === "black"
+            ? "chess-board-wrapper flip"
+            : "chess-board-wrapper"
+        }
+      >
+        <div className="chess-board ">
           {gameboard.map((item1: any, yIndex: any) => {
             return (
               <div className="row" key={item1.length * yIndex + uuid()}>
@@ -575,7 +562,13 @@ export default function Board(props: BoardProps) {
                     <div
                       key={String(item2?.id) + uuid()}
                       onClick={() => handleSquareClick(yIndex, xIndex)}
-                      className={determineClassName(yIndex, xIndex)}
+                      className={determineClassName(
+                        yIndex,
+                        xIndex,
+                        gameboardColors,
+                        gameboard,
+                        activePiece
+                      )}
                     >
                       {item2 !== undefined &&
                       item2 !== null &&
@@ -599,7 +592,7 @@ export default function Board(props: BoardProps) {
             );
           })}
         </div>
-      </>
-    );
-  }
+      </div>
+    </>
+  );
 }

@@ -19,7 +19,7 @@ export default function Sideboard() {
       GameCode: gc,
     };
 
-    await fetch("https://chess-api.quinnpatwardhan.com/get-moves-from-code", {
+    await fetch("http://localhost:3001/get-moves-from-code", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -32,7 +32,6 @@ export default function Sideboard() {
         if (!r2.error) {
           setMovesLedger(r2.reverse());
         } else {
-          console.log(r2);
           window.location.pathname = "/";
           localStorage.clear();
         }

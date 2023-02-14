@@ -12,7 +12,6 @@ export function ColorBishop(bcg: any, yIndex: any, xIndex: any) {
         bcg[yIndex + sidewaysForwardRightN][xIndex + sidewaysForwardRightN] =
           "green";
         sidewaysForwardRightN++;
-        console.log("a");
       }
     } catch (e) {}
     try {

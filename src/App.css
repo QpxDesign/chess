@@ -18,12 +18,20 @@ input {
   font-family: "Source Serif Pro";
   font-size: 1.2em;
 }
-.chess-board {
-  display: flex;
+.chess-board-wrapper {
   max-width: 100vw;
   max-height: 100vh;
-  overflow-x: scroll;
   height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.chess-board {
+  display: flex;
+  height: 94%;
+  width: 94%;
+  overflow-x: scroll;
   aspect-ratio: 1/1;
   flex-direction: column;
   margin: 0 auto;
@@ -160,7 +168,7 @@ h2 {
 }
 .game-wrapper {
   display: flex;
-  background-color: #fdba74;
+  background-color: #633227;
   flex-wrap: wrap;
   width: 100%;
 }
@@ -234,4 +242,80 @@ input {
 .welcomescreen-background a:hover {
   font-style: italic !important;
   color: red;
+}
+.alert-wrapper {
+  position: fixed;
+  top: 0;
+  margin-top: 1.5em;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 1em;
+  background-color: white;
+  box-shadow: 0em 0em 2em 0 rgba(000, 000, 000, 0.3);
+  max-width: max-content;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.33em;
+  padding-bottom: 1.2em !important;
+  width: 30em;
+  max-width: 90% !important;
+  color: black;
+  align-items: center;
+}
+.alert-wrapper h1 {
+  padding: 0.25em 1em;
+  padding-bottom: 0;
+  font-size: 1;
+  color: var(--textcolor) !important;
+}
+.alert-wrapper p {
+  text-align: center;
+  font-size: 1.25em;
+  max-width: 90%;
+  margin: 0 auto;
+  color: var(--textcolor) !important;
+}
+.alert-wrapper .options-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  width: 90%;
+}
+.alert-wrapper .options-wrapper button {
+  padding: 0.25em 1em;
+  max-width: 12em;
+  font-family: "Source Serif Pro", serif !important;
+  font-size: 1.3em;
+  border: none;
+  width: 100% !important;
+  border-radius: 0.25em;
+  margin: 0 auto;
+  margin-top: 0.5em;
+}
+.user-info h5,
+.enemy-info h5 {
+  display: flex;
+  font-size: 1.2em;
+  color: black;
+  gap: 0.5em;
+  position: absolute;
+  padding: 0.25em 0.75em;
+  border-radius: 0em 0em 1em 0em !important;
+  background-color: #d4d4d4;
+  z-index: 9999;
+}
+.enemy-info h5 {
+  bottom: 0;
+  right: 0 !important;
+  border-radius: 1em 0em 0em 0em !important;
+}
+.flip {
+  transform: rotate(180deg);
+}
+.flip img {
+  transform: rotate(180deg);
 }

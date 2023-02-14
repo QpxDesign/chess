@@ -10,6 +10,7 @@ export function handlePieceElimination(
   currentX: any,
   activePiece: any,
   gameboard: any,
+  movesLedger: any,
   gc: any
 ) {
   async function handleMove(
@@ -21,7 +22,6 @@ export function handlePieceElimination(
     nx: any,
     gc: any
   ) {
-    console.log(gb);
     if (gb[0].length !== 0) {
       pieceOBJ.row = ny;
       pieceOBJ.col = nx;
@@ -39,7 +39,7 @@ export function handlePieceElimination(
         moveData: JSON.stringify(mo),
       };
 
-      await fetch("https://chess-api.quinnpatwardhan.com/handle-move", {
+      await fetch("http://localhost:3001/handle-move", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,6 @@ export function handlePieceElimination(
         body: JSON.stringify(data),
       })
         .then((r) => r.json())
-        .then((r2) => console.log(r2))
         .catch((e) => console.error(e));
     }
   }
@@ -62,7 +61,9 @@ export function handlePieceElimination(
         activePiece.col,
         activePiece.facing,
         currentY,
-        currentX
+        currentX,
+        movesLedger,
+        gameboard
       )
     ) {
       const newData = [...gameboard];
